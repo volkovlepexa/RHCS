@@ -1,0 +1,21 @@
+{
+  "name": "rhcs",
+  "version": "0.7.4",
+  "description": "Robotic Home Controlling System",
+  "main": "indigo.js",
+  "scripts": {
+    "test": "echo \"No test - no fear\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CatWhoCode/rhcs.git"
+  },
+  "keywords": [
+    "rhcs"
+  ],
+  "author": "The RHCS Development Team",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/CatWhoCode/rhcs/issues"
+  }
+}
