@@ -4,6 +4,8 @@
  * @version: 0.7.4 Laughing Bear;
  */
 
+/* @FIXME: Придумать стиль для комментирования, и переписать все комментарии */
+
 // == Modules load
 var fs = require('fs');
 var path = require('path');
@@ -123,7 +125,7 @@ global['indigoSocketIO'].on('connection', function (socket) {
 indigo.get('/', function (req, res) {
 
   
-  res.json({ hello: "world" });
+  res.sendFile('system/template/dashboard.html', global['indigoConfiguration'].rootDirectory);
   // Redirect to main page
   //res.redirect('/page/main');
 

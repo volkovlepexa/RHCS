@@ -68,5 +68,8 @@ config.auth.pepper = "ed36b6aa92c6293a02e7b2cc79704b56";
 config.auth.sessionRandomSalt = 'hirsh_will_rull_the_world';
 config.auth.deauthTokenRandomSalt = 'iWishThatICouldBeLikeTheCookies';
 
+// Root directory
+config.rootDirectory = { root: '/var/www/rhcs' }
+
 // Push configuration
 module.exports = config;

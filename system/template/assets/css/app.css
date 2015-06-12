@@ -1,0 +1,11 @@
+/**
+ * Indigo.Frontend.ApplicationCSS - RHCS Frontend Stylesheet
+ * @author: Dmitriy <CatWhoCode> Nogay;
+ * @version: 0.7.4 Laughing Bear;
+ */
+
+body {
+ 
+  background: url('../img/swirl_pattern.png'), #eee;
+  
+}
