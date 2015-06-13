@@ -15,8 +15,8 @@ config.redis = {
 
   // Redis Server IP.
   // Warning - Redis have a plaintext protocol. It is fully unsecured.
-  // Please, if you use extranet Redis server - use one of amount tunnels to this server (VPN as example)
-  // Sending plaintext data isn't secure thing.
+  // Please, if you use extranet Redis server - use one of amount types of tunnels to this server (VPN as example)
+  // Sending plaintext data isn't secure.
   host: '127.0.0.1',
 
   // Redis Server port
@@ -43,14 +43,6 @@ config.serverPorts = {
   
 };
 
-// TLS configuration
-config.httpsConfiguration = {};
-
-config.httpsConfiguration = {
-  key: fs.readFileSync("./system/data/tls/prv.key"),
-  cert: fs.readFileSync("./system/data/tls/pub.crt")
-}
-
 // Authication
 config.auth = {};
 
@@ -70,6 +62,15 @@ config.auth.deauthTokenRandomSalt = 'iWishThatICouldBeLikeTheCookies';
 
 // Root directory
 config.rootDirectory = { root: '/var/www/rhcs' }
+
+// Weather Underground
+config.wundergroundAPIData = {
+
+  locationCountry: 'RU',
+  locationCity: 'Novosibirsk',
+  apikey: 'd5076c4f0f39c02d'
+  
+}
 
 // Push configuration
 module.exports = config;

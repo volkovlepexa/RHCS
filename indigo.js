@@ -4,23 +4,21 @@
  * @version: 0.7.4 Laughing Bear;
  */
 
-/* @FIXME: Придумать стиль для комментирования, и переписать все комментарии */
-
-// == Modules load
+// Load main modules
 var fs = require('fs');
 var path = require('path');
 var express = require('express');
 var logger = require('mag')('Indigo');
 var cookieParser = require('cookie-parser');
 
-// == Say hello
+// Hello world
 logger.info("RHCS Indigo v0.7.4 Laughing Bear");
 logger.info("Hello World");
 
-// == Load configuration
+// System configuration
 global['indigoConfiguration'] = require('./system/core/configuration.js');
 
-// == Initalize Redis
+// Connect to Redis
 global['indigoRedis'] = require('redis').createClient(global['indigoConfiguration'].redis.port, global['indigoConfiguration'].redis.host);
 
 // Redis Error catcher
@@ -34,8 +32,16 @@ global['indigoRedis'].on('error', function (err) {
 
 });
 
-// Authenticate us, if we need it
+// Redis authentication
 if(global['indigoConfiguration'].redis.usePassword) { global['indigoRedis'].auth(global['indigoConfiguration'].redis.password); }
+
+// TLS configuration
+global['indigoConfiguration'].httpsConfiguration = {};
+
+global['indigoConfiguration'].httpsConfiguration = {
+  key: fs.readFileSync("./system/data/tls/prv.key"),
+  cert: fs.readFileSync("./system/data/tls/pub.crt")
+}
 
 // Select database (default: 0)
 global['indigoRedis'].select(global['indigoConfiguration'].redis.dbIndex, function() { return; });
@@ -54,7 +60,7 @@ global['indigoRedis'].get('foo', function (err, data) {
   
   }
 
-  // Check value (foo == bar)
+  // Check db test value (foo == bar)
   if(data !== 'bar') {
 
     // Log this
@@ -78,7 +84,7 @@ global['indigoRedis'].get('foo', function (err, data) {
 
 });
 
-// == Initalize server (HTTP & HTTPS)
+// Initalize web server
 
 // Init Indigo Application
 var indigo = require('express')();
