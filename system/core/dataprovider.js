@@ -170,7 +170,7 @@ module.exports.wundergroundParser = function (callback, params) {
         temperature: data.current_observation.temp_c,
         feel_temperature: parseInt(data.current_observation.feelslike_c),
         humidity: parseInt(data.current_observation.relative_humidity),
-        pressure: (data.current_observation.pressure_mb * 0.75006375541921), // Convert mbars to mmHg
+        pressure: Math.round(data.current_observation.pressure_mb * 0.75006375541921), // Convert mbars to mmHg
         drewpoint: data.current_observation.dewpoint_c
 
       };

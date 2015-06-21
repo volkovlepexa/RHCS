@@ -78,6 +78,14 @@ if(process.argv[2] === 'start' && process.argv[3] === 'updateCurrencyRate') {
     
     // Save to Redis
     global['indigoRedis'].set('rhcs:provided_data:currencyRate', JSON.stringify(currencyRate));
+		global['indigoRedis'].hset('rhcs:timeWidget', 'currencyRates', JSON.stringify(
+			{ 
+			  
+				usd: currencyRate.usd,
+				eur: currencyRate.eur
+				
+			}
+		));
     
     // Exit
     process.exit(0);
@@ -102,6 +110,15 @@ else if(process.argv[2] === 'start' && process.argv[3] === 'updateWeatherConditi
     
     // Save to Redis
     global['indigoRedis'].set('rhcs:provided_data:weatherConditions', JSON.stringify(data.data));
+		global['indigoRedis'].hset('rhcs:timeWidget', 'weatherConditions', JSON.stringify(
+			{
+				
+				temperature: data.data.temperature,
+				humidity: data.data.humidity,
+				pressure: data.data.pressure
+				
+			}
+		));
     
     // Exit
     process.exit(0);

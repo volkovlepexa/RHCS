@@ -10,6 +10,7 @@ var path = require('path');
 var express = require('express');
 var logger = require('mag')('Indigo');
 var cookieParser = require('cookie-parser');
+var userModule = require('./system/core/users.js');
 
 // Hello world
 logger.info("RHCS Indigo v0.7.4 Laughing Bear");
@@ -134,5 +135,103 @@ indigo.get('/', function (req, res) {
   res.sendFile('system/template/dashboard.html', global['indigoConfiguration'].rootDirectory);
   // Redirect to main page
   //res.redirect('/page/main');
+
+});
+
+// API
+indigo.get('/api/v1/:action', function (req, res) {
+
+	// @FIXME Make standalone module for API actions
+	if(req.params.action == "getTimeWidgetData") {
+
+		// Session check
+  	if(typeof(req.query.session) == 'undefined') {
+
+			// Log
+	  	logger.warn("API Error - Session undefined from [ " + req.connection.remoteAddress + " ]");
+	
+			// Return error code
+	  	res.status(422);
+			res.json({ code: 422, error: "Session not defined" });
+	
+			// Exit
+	  	return;
+
+  	}
+
+  	// Validate session
+  	userModule.validateSessionAction(req.query.session, function (data) {
+	
+			// Check errors
+			if(data.code != 200) {
+		
+				// Return error code
+				res.status(data.code);
+				res.json(data);
+			
+				// Exit
+				return;
+		
+			}
+		
+			// If code equals to 200 - session are valid
+			global['indigoRedis'].hgetall("rhcs:timeWidget", function (err, replies) {
+		
+				// Catch error
+				if(err) {
+				
+					// Return API error
+					res.status(500);
+					res.json({ code: 500 });
+					
+					// Log
+					logger.warn("API " + err + " from [ " + req.connection.remoteAddress + " ]");
+					
+					// Exit
+					return;
+				
+				}
+				
+				// Reply API data
+				res.json({
+				
+					weatherConditions: JSON.parse(replies.weatherConditions),
+					currencyRates: JSON.parse(replies.currencyRates)
+				
+				});
+				
+				// Exit
+				return;
+		
+			});
+	
+		});
+	
+	}
+
+});
+
+// API with undefined action
+indigo.get('/api/v1', function (req, res) {
+
+  // Warning in log
+  logger.warn("API action not defined from " + req.connection.remoteAddress);
+  
+  // Send error
+  res.json({ code: 422, error: "API action not defined" });
+
+});
+
+// API without version
+indigo.get('/api/*', function (req, res) {
+
+  // Warning in log
+  logger.warn("API version not defined from " + req.connection.remoteAddress);
+  
+  // Send error
+  res.json({ code: 422, error: 'API version not defined' });
+  
+  // Exit
+  return;
 
 });
