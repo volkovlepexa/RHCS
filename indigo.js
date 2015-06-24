@@ -10,7 +10,7 @@ var path = require('path');
 var express = require('express');
 var logger = require('mag')('Indigo');
 var cookieParser = require('cookie-parser');
-var userModule = require('./system/core/users.js');
+var apiProvider = require('./system/core/apiprovider.js');
 
 // Hello world
 logger.info("RHCS Indigo v0.7.4 Laughing Bear");
@@ -139,75 +139,10 @@ indigo.get('/', function (req, res) {
 });
 
 // API
-indigo.get('/api/v1/:action', function (req, res) {
+indigo.get('/api/v1/:action', function (req, res, next) {
 
-	// @FIXME Make standalone module for API actions
-	if(req.params.action == "getTimeWidgetData") {
-
-		// Session check
-  	if(typeof(req.query.session) == 'undefined') {
-
-			// Log
-	  	logger.warn("API Error - Session undefined from [ " + req.connection.remoteAddress + " ]");
-	
-			// Return error code
-	  	res.status(422);
-			res.json({ code: 422, error: "Session not defined" });
-	
-			// Exit
-	  	return;
-
-  	}
-
-  	// Validate session
-  	userModule.validateSessionAction(req.query.session, function (data) {
-	
-			// Check errors
-			if(data.code != 200) {
-		
-				// Return error code
-				res.status(data.code);
-				res.json(data);
-			
-				// Exit
-				return;
-		
-			}
-		
-			// If code equals to 200 - session are valid
-			global['indigoRedis'].hgetall("rhcs:timeWidget", function (err, replies) {
-		
-				// Catch error
-				if(err) {
-				
-					// Return API error
-					res.status(500);
-					res.json({ code: 500 });
-					
-					// Log
-					logger.warn("API " + err + " from [ " + req.connection.remoteAddress + " ]");
-					
-					// Exit
-					return;
-				
-				}
-				
-				// Reply API data
-				res.json({
-				
-					weatherConditions: JSON.parse(replies.weatherConditions),
-					currencyRates: JSON.parse(replies.currencyRates)
-				
-				});
-				
-				// Exit
-				return;
-		
-			});
-	
-		});
-	
-	}
+	// getTimeWidgetData - get information about weather and currency rates
+	if(req.params.action == "getTimeWidgetData") { apiProvider.getTimeWidgetData(req, res); }
 
 });
 

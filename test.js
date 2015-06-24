@@ -1,4 +1,4 @@
-var u = require('./system/core/users.js');
+var u = require('./system/core/userprovider.js');
 
 // System configuration
 global['indigoConfiguration'] = require('./system/core/configuration.js');
