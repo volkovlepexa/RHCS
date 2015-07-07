@@ -1,32 +1,38 @@
-/**
- * Indigo.Core.Configuration - Indigo configuration file
- * @author: Dmitriy <CatWhoCode> Nogay;
- * @version: 0.7.4 Laughing Bear;
- */
+/*
 
-var config = {};
-var fs = require('fs');
+  RHCS.System.Core.configuration.js
+  @version: 0.7.4;
+  @author: Dmitriy <CatWhoCode> Nogay;
+  
+  This module containts RHCS Indigo system configurationuration.
+  You are pleasure to add your own properties here.
+  But, please, use object for your module properties and
+  put little description of each property.
 
-// Redis configuration
-config.redis = {};
+*/
+
+var configuration = {};
+
+////////////////////////////////
+//  BEGIN CONFIGURATION FILE  // 
+////////////////////////////////
 
 // Redis DB Connection Settings
-config.redis = {
+configuration.redis = {
 
-  // Redis Server IP.
-  // Warning - Redis have a plaintext protocol. It is fully unsecured.
-  // Please, if you use extranet Redis server - use one of amount types of tunnels to this server (VPN as example)
-  // Sending plaintext data isn't secure.
+  // Redis Server host
+  // Remember - Redis using fully unsecured, plaintext protocol.
+  // If you want to connect to remote server - please, use some kind of tunnels (like VPN).
   host: '127.0.0.1',
 
   // Redis Server port
   port: 6379,
 
   // Is we need password to authication?
-  // Cool guys alvays using passwords
+  // Cool guys alvays use passwords
   usePassword: true,
 
-  // Password in plaintext
+  // Password
   password: 'furetnth',
 
   // Redis can handle amounts of databases.
@@ -35,36 +41,44 @@ config.redis = {
 
 }
 
-// Port configuration
-config.serverPorts = {
+// Indigo HTTP(S) Server ports
+configuration.indigoWebserverPorts = {
   
+  // Port of HTTP unsecured server
   httpPort: 1384,
+  
+  // Port of HTTPS secured server
   httpsPort: 1385
   
 };
 
-// Authication
-config.auth = {};
+// Authentication parameters
+configuration.authenticationSettings = {
 
-// Max invalid authication attempts before ban
-config.auth.maxInvalidAttempts = 6;
+  // Max invalid authication attempts before ban
+  maxInvalidAttempts: 6,
 
-// Ban timeout (in seconds)
-config.auth.banInterval = 60;
+  // Ban timeout (in seconds)
+  banInterval: 60,
 
-// Global password hash parameter
-config.auth.pepper = "ed36b6aa92c6293a02e7b2cc79704b56";
+  // Additional global password hash parameter
+  pepper: "ed36b6aa92c6293a02e7b2cc79704b56",
+  
+  // Cookie signing secret
+  cookieSecret: "9c946958780c7cd6f6dc89a8121d0d1e"
 
-// Change theese values to your own awesome and creative values
-// Please, not too big.
-config.auth.sessionRandomSalt = 'hirsh_will_rull_the_world';
-config.auth.deauthTokenRandomSalt = 'iWishThatICouldBeLikeTheCookies';
+};
 
 // Root directory
-config.rootDirectory = { root: '/var/www/rhcs' }
+configuration.rootDirectory = { 
+
+  // Installation directory
+  root: '/mnt/Storage/Devworlds/RHCS/indigo'
+
+}
 
 // Weather Underground
-config.wundergroundAPIData = {
+configuration.wundergroundAPIData = {
 
   locationCountry: 'RU',
   locationCity: 'Novosibirsk',
@@ -72,5 +86,9 @@ config.wundergroundAPIData = {
   
 }
 
-// Push configuration
-module.exports = config;
+////////////////////////////
+// END CONFIGURATION FILE // 
+////////////////////////////
+
+// Push configuration object as module
+module.exports = configuration;

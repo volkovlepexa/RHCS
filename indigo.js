@@ -1,108 +1,50 @@
-/**
- * Indigo - RHCS Server application
- * @author: Dmitriy <CatWhoCode> Nogay;
- * @version: 0.7.4 Laughing Bear;
- */
+/*
 
-// Load main modules
-var fs = require('fs');
-var path = require('path');
-var express = require('express');
-var logger = require('mag')('Indigo');
+  RHCS.Indigo
+  @version: 0.7.4;
+  @author: Dmitriy <CatWhoCode> Nogay;
+  
+  Main server application.
+
+*/
+
+// Modules
 var cookieParser = require('cookie-parser');
-var apiProvider = require('./system/core/apiprovider.js');
+var bodyParser = require('body-parser')
+var express = require('express');
+var fs = require('fs');
 
-// Hello world
-logger.info("RHCS Indigo v0.7.4 Laughing Bear");
-logger.info("Hello World");
+// Attach logger
+var mag = require('mag');
+var log = mag('Indigo');
 
-// System configuration
-global['indigoConfiguration'] = require('./system/core/configuration.js');
+// Hello World
+log.info("RHCS Indigo v0.7.4 Laughing Bear");
+log.info("Bootstrapping..");
 
-// Connect to Redis
-global['indigoRedis'] = require('redis').createClient(global['indigoConfiguration'].redis.port, global['indigoConfiguration'].redis.host);
+// Load configuration
+var configuration = require('./system/core/configuration.js');
 
-// Redis Error catcher
-global['indigoRedis'].on('error', function (err) {
+// Attach Redis from factory
+redisClient = require('./system/core/redis_factory.js').init( mag, configuration );
 
-  // Log error entity
-  logger.warn("Redis " + err);
- 
-  // Kill Node if error
-  throw err;
+// Log
+log.debug('Attaching Express..');
 
-});
-
-// Redis authentication
-if(global['indigoConfiguration'].redis.usePassword) { global['indigoRedis'].auth(global['indigoConfiguration'].redis.password); }
-
-// TLS configuration
-global['indigoConfiguration'].httpsConfiguration = {};
-
-global['indigoConfiguration'].httpsConfiguration = {
-  key: fs.readFileSync("./system/data/tls/prv.key"),
-  cert: fs.readFileSync("./system/data/tls/pub.crt")
-}
-
-// Select database (default: 0)
-global['indigoRedis'].select(global['indigoConfiguration'].redis.dbIndex, function() { return; });
-
-// Simplest db check
-global['indigoRedis'].get('foo', function (err, data) {
-
-  // If error
-  if(err) {
-    
-    // Log this
-    logger.warn(err);
-
-    // Shutdown Indigo with error
-    process.exit(1);
-  
-  }
-
-  // Check db test value (foo == bar)
-  if(data !== 'bar') {
-
-    // Log this
-    logger.warn("Redis database doesn't contain correct validation value (foo)");
-
-    // Shutdown Indigo with error
-    process.exit(1);
-
-  }
-  
-  // DB seems like to be correct
-  else {
-    
-    // Notify
-    logger.debug('Successfull connected to Redis DB');
-    
-    // Exit
-    return;
-    
-  }
-
-});
-
-// Initalize web server
-
-// Init Indigo Application
+// Initialize Indigo server
 var indigo = require('express')();
+
+// Create listeners
+require('./system/core/server_init.js')( mag, indigo, fs, configuration );
 
 // Static data route
 indigo.use('/assets', express.static('./system/template/assets'));
 
-// Using cookie-parser module
+// Using cookie-parser module with cryptographic signature support
 indigo.use(cookieParser());
 
-// securedServer - Server with encryption (default port: 1385)
-var securedServer = require('https').createServer(global['indigoConfiguration'].httpsConfiguration, indigo);
-securedServer.listen(global['indigoConfiguration'].serverPorts.httpsPort);
-
-// securedServer - Server with encryption (default port: 1384)
-var plainServer = require('http').createServer(indigo);
-plainServer.listen(global['indigoConfiguration'].serverPorts.httpPort);
+// Parse POST on-the-go
+indigo.use(bodyParser.urlencoded({ extended: false }));
 
 // Allow CORS in Indigo server
 indigo.use(function(req, res, next) {
@@ -114,59 +56,281 @@ indigo.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   
   // Go to next handler
-  next();
+  return next();
   
 });
 
-// IO - Socket.IO Server
-global['indigoSocketIO'] = require('socket.io')(securedServer);
+// Indigo Main Router
+var indigoRouter = express.Router();
+indigo.use('/api/v1', indigoRouter);
 
-// Socket.IO API
-global['indigoSocketIO'].on('connection', function (socket) {
+/** 
+ * Session.POST - Authenticating user credentials and returning session
+ * @require: Username, Password
+ * @return: Session
+ */
+indigoRouter.route('/session').post(function (req, res) {
   
-  // ANCHOR RHCS.SOCKETIO.HANDLERS
+  // Check parameters
+  if(typeof(req.body.username) == 'undefined' || typeof(req.body.password) == 'undefined') {
   
-});
-
-// == Routing
-indigo.get('/', function (req, res) {
-
+    // Return error
+    res.status(400);
+    res.json({ code: 400, error: 'Username or password not defined' });
+    
+    // Exit
+    res.end();
   
-  res.sendFile('system/template/dashboard.html', global['indigoConfiguration'].rootDirectory);
-  // Redirect to main page
-  //res.redirect('/page/main');
-
-});
-
-// API
-indigo.get('/api/v1/:action', function (req, res, next) {
-
-	// getTimeWidgetData - get information about weather and currency rates
-	if(req.params.action == "getTimeWidgetData") { apiProvider.getTimeWidgetData(req, res); }
-
-});
-
-// API with undefined action
-indigo.get('/api/v1', function (req, res) {
-
-  // Warning in log
-  logger.warn("API action not defined from " + req.connection.remoteAddress);
+  }
   
+  // Check length and signs
+  if( req.body.username.length < 3 || req.body.password.length < 3 || !(/^[\w.@]+$/.test(req.body.username)) ) {
+  
+    // Return error
+    res.status(400);
+    res.json({ code: 400, error: 'Username or password incorrect' });
+    
+    // Exit
+    return;
+  
+  }
+  
+  // Get user data
+  redisClient.get('rhcs:users:' + req.body.username, function (err, data) {
+  
+    // Catch errors
+    if(err) {
+    
+      // Log
+      log.error('Redis ' + err.message);
+      
+      // Return error code
+      res.status(500);
+      res.json({ code: 500, error: 'Internal Server Error' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Uset not exists
+    if(!data) {
+    
+      // Return error
+      res.status(403);
+      res.json({ code: 403, error: 'Username or password invalid' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Parse data
+    data = JSON.parse(data);
+    
+    // If user exists - check password
+    var crypto = require('crypto');
+    var password = crypto.createHash('sha256').update(
+      crypto.createHash('sha256').update(
+        req.body.password + configuration.authenticationSettings.pepper
+      ).digest('hex') + data.salt
+    ).digest('hex');
+    
+    // Password incorrect
+    if(password !== data.password) {
+    
+      // Return error
+      res.status(403);
+      res.json({ code: 403, error: 'Username or password invalid' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Create session
+    var session = crypto.createHash('md5').update((Math.floor(Math.random() * (99988888898 + 1)) + 111111111) + 'randdigest').digest('hex');
+    
+    // Save session to Redis DB
+    try {
+    
+      redisClient.set('rhcs:sessions:' + session, JSON.stringify({ username: req.body.username, timestamp: Math.round(new Date().getTime() / 1000), ip: req.ip }));
+      
+    } catch (e) {
+    
+      // Log
+      log.error(e.message);
+      
+      // Send error code
+      res.status(500);
+      res.json({ code: 500, error: 'Internal Server Error' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Return session
+    res.json({ code: 200, session: session });
+    
+    // Exit
+    return;
+  
+  });
+
+})
+
+// Catch DELETE error
+.delete(function (req, res) {
+
   // Send error
-  res.json({ code: 422, error: "API action not defined" });
-
-});
-
-// API without version
-indigo.get('/api/*', function (req, res) {
-
-  // Warning in log
-  logger.warn("API version not defined from " + req.connection.remoteAddress);
-  
-  // Send error
-  res.json({ code: 422, error: 'API version not defined' });
+  res.status(400);
+  res.json({ code: 400, error: 'Session not defined' });
   
   // Exit
   return;
+
+})
+
+// Catch GET error
+.get(function (req, res) {
+
+  // Send error
+  res.status(400);
+  res.json({ code: 400, error: 'Session not defined' });
+
+  // Exit
+  return;
+  
+});
+
+/** 
+ * Session.DELETE - Delete session
+ * @require: Session
+ * @return: null
+ */
+indigoRouter.route('/session/:session').delete(function (req, res) {
+
+  // Check session length and regexp
+  if(req.params.session.length != 32 || !(/^[0-9A-Fa-f]+$/.test(req.params.session))) {
+  
+    // Send error
+    res.status(400);
+    res.json({ code: 400, error: 'Session incorrect' });
+    
+    // Exit
+    return;
+    
+  }
+  
+  // Try to delete 
+  redisClient.del('rhcs:sessions:' + req.params.session, function (err, state) {
+  
+    // Catch errors
+    if(err) {
+
+      // Log
+      log.error('Redis ' + err.message);
+
+      // Return error code
+      res.status(500);
+      res.json({ code: 500, error: 'Internal Server Error' });
+
+      // Exit
+      return;
+
+    }
+    
+    // Check, is this session deleted
+    if(state) {
+    
+      // Send OK code
+      res.json({ code: 200 });
+      
+      // Exit
+      return;
+      
+    }
+    
+    else {
+    
+      // Send ERR code
+      res.json({ code: 404, error: 'Session not found' });
+      
+      // Exit
+      return;
+    
+    }
+    
+  });
+
+})
+
+/** 
+ * Session.GET - Get information about session
+ * @require: Session
+ * @return: Session info
+ */
+.get(function (req, res) {
+
+  // Check session length and regexp
+  if(req.params.session.length != 32 || !(/^[0-9A-Fa-f]+$/.test(req.params.session))) {
+
+    // Send error
+    res.status(400);
+    res.json({ code: 400, error: 'Session incorrect' });
+
+    // Exit
+    return;
+
+  }
+  
+  // Get info from Redis
+  redisClient.get('rhcs:sessions:' + req.params.session, function (err, data) {
+  
+    // Catch error
+    if(err) {
+
+      // Log
+      log.error('Redis ' + err.message);
+
+      // Return error code
+      res.status(500);
+      res.json({ code: 500, error: 'Internal Server Error' });
+
+      // Exit
+      return;
+
+    }
+    
+    // Check session existing
+    if(!data) {
+    
+      // Send ERR code
+      res.status(404);
+      res.json({ code: 404, error: 'Session not found' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Parse data
+    data = JSON.parse(data);
+    
+    // Return data
+    res.json({
+    
+      code: 200,
+      username: data.username,
+      timestamp: data.timestamp,
+      ip: data.ip
+      
+    });
+    
+    // Exit
+    return;
+  
+  });
 
 });
