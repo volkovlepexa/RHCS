@@ -20,3 +20,20 @@ pwdHash(password, salt) =  sha256(sha256(**password** + config.auth.pepper) + **
 При каждом запросе, пользователь отправляет на сервер параметр **rhcsSession**, который позволяет подтвердить личность
 
 Если пользователь деавторизуется в системе, то вместе с запросом на деавторизацию, передается сессия (**rhcsSession**) и параметр **rhcsDeauthToken**. *Во всех иных случаях, этот параметр не отправляется с запросами на сервер.*
+
+
+### API Status code
+
+**200** - Success
+
+**201** - Created
+
+**400** - Bad Request
+
+**401** - Unauthorized
+
+**403** - Forbidden
+
+**404** - Not Found
+
+**500** - Internal Server Error
