@@ -1,4 +1,4 @@
-var userProvider = require('../system/core/user_provider.js');
+var userProvider = require('../system/core/providers/user_provider.js');
 
 function myLovelyDebugger(err, data) {
 
@@ -18,47 +18,24 @@ function myLovelyDebugger(err, data) {
 
 }
 
-/*
-
 // User.getUserInformation - get information about user
-userProvider.getUserInformation('demousr', function (err, data) { myLovelyDebugger(err, data); });
-
-*/
-
-
-/*
+//userProvider.getUserInformation('demousr', function (err, data) { myLovelyDebugger(err, data); });
 
 // User.authenticateUsername - authenticating user via username + password
-userProvider.authenticateUsername('demousr', 'demopassword', function (err, data) { myLovelyDebugger(err, data); });
-
-*/
-
-
-/*
+//userProvider.authenticateUsername('demousr', 'demopassword', function (err, data) { myLovelyDebugger(err, data); });
 
 // User.deauthenticateSession - deauthenticate session
-userProvider.deauthenticateSession('8245d1c45892bf06ea93df53c48a6549', function (err, data) { myLovelyDebugger(err, data); });
-
-*/
-
-/*
+//userProvider.deauthenticateSession('8245d1c45892bf06ea93df53c48a6549', function (err, data) { myLovelyDebugger(err, data); });
 
 // User.getSessionInformation - get information about session
-userProvider.getSessionInformation('8245d1c45892bf06ea93df53c48a6549', function (err, data) { myLovelyDebugger(err, data); });
-
-*/
-
-/*
+//userProvider.getSessionInformation('8245d1c45892bf06ea93df53c48a6549', function (err, data) { myLovelyDebugger(err, data); });
 
 // User.createUser - create user
 userProvider.createUser('demousr', 'demopassword', 'Peter', 'peter@example.com', '03.02.1970', function (err, data) { myLovelyDebugger(err,data); });
 
-*/
-
-/*
+// User.editUser - edit user
+//userProvider.editUser('demousr', { username: 'glitterbug', fullname: 'Asya', password: 'deathcubforcutie' }, function (err, data) { myLovelyDebugger(err, data); });
 
 // User.deleteUser - delete user
-userProvider.deleteUser('demousr', function (err, data) { myLovelyDebugger(err, data); });
-
-*/
+//userProvider.deleteUser('demousr', function (err, data) { myLovelyDebugger(err, data); });
 

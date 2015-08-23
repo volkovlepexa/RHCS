@@ -1,6 +1,6 @@
 /*
 
-  RHCS.System.Core.User_Provider.js
+  RHCS.System.Core.Providers.User_Provider.js
   @version: 0.7.4;
   @author: Dmitriy <CatWhoCode> Nogay;
 
@@ -18,10 +18,10 @@ var log = require('mag')('UserModule');
 var crypto = require('crypto');
 
 // Load configuration
-var configuration = require('./configuration.js');
+var configuration = require('../configuration.js');
 
 // Attaching Redis
-var redisClient = require('./redis_factory.js').init( require('mag'), configuration );
+var redisClient = require('../redis_factory.js').init( require('mag'), configuration );
 
 // Authentication Error
 function AuthenticationError( settings, implementationContext ) {
@@ -34,6 +34,7 @@ function AuthenticationError( settings, implementationContext ) {
 
 }
 
+// Merge Error and AuthenticationError
 util.inherits( AuthenticationError, Error );
 
 /**
@@ -425,6 +426,30 @@ module.exports.createUser = function ( username, password, fullname, email, birt
  */
 module.exports.deleteUser = function ( username, callback ) {
 
+  // Check input data
+  if(typeof(username) != 'string' || typeof(callback) !== 'function') {
+
+    // Callback type correct
+    if(typeof(callback) == 'function') {
+
+      // Return error callback
+      return callback(new AuthenticationError({ message: 'Incorrect input data', errorCode: 400 }));
+
+    }
+
+    // Callback type invalid
+    else {
+
+      // Send it to logger
+      log.error('Incorrect input data or callback');
+
+      // Exit
+      return;
+
+    }
+
+  }
+  
   // Check, is username correct
   if(username.length < 3 || !(/^[\w.@]+$/).test(username)) {
   
@@ -481,4 +506,141 @@ module.exports.deleteUser = function ( username, callback ) {
   
   });
 
-};
+}
+
+/**
+ * User.editUser - edit user
+ * @param   {String} username   Username
+ * @param   {Object} changeData Object with changed data
+ * @param   {Function} callback Callback
+ * @returns {Function} Callback
+ */
+module.exports.editUser = function ( username, changeData, callback ) {
+
+  // Check input data
+  if(typeof(username) !== 'string' || typeof(changeData) !== 'object' || typeof(callback) !== 'function') {
+
+    // Callback type correct
+    if(typeof(callback) == 'function') {
+
+      // Return error callback
+      return callback(new AuthenticationError({ message: 'Incorrect input data', errorCode: 400 }));
+
+    }
+
+    // Callback type invalid
+    else {
+
+      // Send it to logger
+      log.error('Incorrect input data or callback');
+
+      // Exit
+      return;
+
+    }
+
+  }
+
+  // Check input data length & username regexp
+  if(username.length < 3 || !(/^[\w.@]+$/).test(username)) {
+
+    // Return error callback
+    return callback(new AuthenticationError({ message: 'Incorrect input data', errorCode: 400 }));
+
+  }
+  
+  // Get username
+  redisClient.get('rhcs:users:' + username, function (err, data) {
+  
+    // Catch error
+    if(err) {
+
+      // Log entity
+      log.warn(err);
+
+      // Return callback
+      return callback(new AuthenticationError({ message: 'Redis ' + err, errorCode: 500 }));
+
+    }
+    
+    // Username not exists
+    if(!data) {
+    
+      return callback(new AuthenticationError({ message: 'Username not exists', errorCode: 404 }));
+    
+    }
+    
+    // Parse JSON
+    data = JSON.parse(data);
+    
+    // Attach built-in objects extender
+    var extend = require('util')._extend;
+    
+    // Check, if we need to rehash password
+    if(typeof(changeData.password) !== 'undefined') {
+    
+      // Using already existing salt
+      
+      // Round One
+      var hashedPassword = crypto.createHash('sha256').update(changeData.password + configuration.authenticationSettings.pepper).digest('hex');
+      
+      // Round Two
+      hashedPassword = crypto.createHash('sha256').update(hashedPassword + data.salt).digest('hex');
+      
+      // Set new value
+      changeData.password = hashedPassword;
+    
+    }
+    
+    // Check, is username need to be change
+    if(typeof(changeData.username) !== 'undefined' && changeData.username !== data.username) {
+    
+      // Check, is this user already exists
+      redisClient.get('rhcs:users:' + changeData.username, function (err, ndata) {
+      
+        // Catch error
+        if(err) {
+
+          // Log entity
+          log.warn(err);
+
+          // Return callback
+          return callback(new AuthenticationError({ message: 'Redis ' + err, errorCode: 500 }));
+
+        }
+        
+        // User exists
+        if(ndata) { return callback(new AuthenticationError({ message: 'Username already exists', errorCode: 400 })); }
+        
+        // Delete existing username
+        redisClient.del('rhcs:users:' + username);
+
+        // Merge new data and old data
+        data = extend(data, changeData);
+
+        // Save new user
+        redisClient.set('rhcs:users:' + changeData.username, JSON.stringify(data));
+
+        // Return 201 Created
+        return callback(undefined, { code: 201 });
+      
+      });
+    
+    }
+    
+    else {
+      
+      // Just edit existing user
+      data = extend(data, changeData);
+    
+      // Update user
+      redisClient.set('rhcs:users:' + username, JSON.stringify(data));
+    
+      // Return 200 OK
+      return callback(undefined, { code: 200 });
+      
+    }
+  
+  });
+
+}

@@ -21,7 +21,6 @@
   "homepage": "https://rhcs.catwhocode.ga",
   "dependencies": {
     "redis": "~0.12.1",
-    "syncho": "~0.2.3",
     "mag": "~0.9.1",
     "hiredis": "~0.3.0",
     "superagent": "~1.2.0",
