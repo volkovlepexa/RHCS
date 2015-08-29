@@ -29,10 +29,7 @@ var userProvider = require('../providers/user_provider.js');
  * @apiParam {String} username Username
  * @apiParam {String} session Session
  *
- * @apiSuccess {String} username  Username
- * @apiSuccess {String} fullname  Name
- * @apiSuccess {String} email     EMail
- * @apiSuccess {String} birthday  Birthday
+ * @apiSuccess {Object} userData  User information
  *
  * @apiError IncorrectData     Incorrect input data
  * @apiError UserNotFound      Username not exist
@@ -145,7 +142,7 @@ module.exports.userGET = function (req, res) {
  * @apiParam {String} birthday Birthday (ex: 11.07.1989)
  * @apiParam {String} session  Session
  *
- * @apiSuccess {String} code   Status Code
+ * @apiSuccess {Object} code   Status Code
  *
  * @apiError IncorrectData     Incorrect input data
  * @apiError UsernameExists    Username already exists
@@ -274,7 +271,7 @@ module.exports.userPOST = function (req, res) {
  * @apiParam {String} session    Session
  * @apiParam {Object} changeData Object with data to change
  *
- * @apiSuccess {String} code   Status Code
+ * @apiSuccess {Object} code   Status Code
  *
  * @apiError IncorrectData     Incorrect input data
  * @apiError UsernameExists    Username already exists (if we want change username)
@@ -364,7 +361,7 @@ module.exports.userPUT = function (req, res) {
 
 
 /**
- * @api {delete} /users/:username?session=session Change user data
+ * @api {delete} /users/:username?session=session Delete user
  * @apiVersion 0.7.4
  * @apiName ChangeUser
  * @apiGroup User
@@ -372,7 +369,7 @@ module.exports.userPUT = function (req, res) {
  * @apiParam {String} username   Username
  * @apiParam {String} session    Session
  *
- * @apiSuccess {String} code   Status Code
+ * @apiSuccess {Object} code   Status Code
  * 
  * @apiError IncorrectData     Incorrect input data
  * @apiError UsernameNotFound  Username not found
@@ -455,6 +452,377 @@ module.exports.userDELETE = function (req, res) {
     
     });
 
+  });
+
+}
+
+
+/**
+ * @api {get} /sessions/:session?session=auth_session Get information about session
+ * @apiVersion 0.7.4
+ * @apiName GetSessionInfo
+ * @apiGroup User
+ *
+ * @apiParam {String} session       Session
+ * @apiParam {String} auth_session  Authenticated Session
+ *
+ * @apiSuccess {Object} code   Status Code
+ * 
+ * @apiError IncorrectData    Incorrect input data
+ * @apiError SessionNotFound  Username not found
+ * @apiError Forbidden        Authentication session not exist
+ */
+module.exports.sessionGET = function (req, res) {
+
+  // Check input data
+  if(typeof(req.params.session) === 'undefined' || typeof(req.query.auth_session) === 'undefined') {
+
+    // Log this
+    log.error("Important API parameters undefined from " + req.connection.remoteAddress);
+
+    // Return error
+    res.status(400);
+    res.json({ code: 400, description: 'Important parameter(s) undefined' });
+
+    // Exit
+    return;
+
+  }
+
+  // Check using RegExp
+  if( req.params.session.length != 32 || req.query.auth_session.length != 32 || !(/^[0-9A-Fa-f]+$/).test(req.params.session) || !(/^[0-9A-Fa-f]+$/).test(req.query.auth_session) ) {
+
+    // Log this
+    log.error("Important API parameters incorrect from " + req.connection.remoteAddress);
+
+    // Return error
+    res.status(400);
+    res.json({ code: 400, description: 'Important parameter(s) was incorrect' });
+
+    // Exit
+    return;
+
+  }
+
+  // Try to authenticate session
+  userProvider.getSessionInformation(req.query.auth_session, function (err, data) {
+
+    // Session error
+    if(err) {
+
+      // Log this
+      log.error(err.message + " from " + req.connection.remoteAddress);
+
+      // Send error
+      res.status(err.errorCode);
+      res.json({ code: err.errorCode, description: err.message });
+
+      // Exit
+      return;
+
+    }
+
+    // Get information about requested session
+    userProvider.getSessionInformation(req.params.session, function (err, data) {
+    
+      // Session error
+      if(err) {
+
+        // Log this
+        log.error(err.message + " from " + req.connection.remoteAddress);
+
+        // Send error
+        res.status(err.errorCode);
+        res.json({ code: err.errorCode, description: err.message });
+
+        // Exit
+        return;
+
+      }
+      
+      // Return session
+      res.json({ code: 200, data: data });
+      
+      // Exit
+      return;
+    
+    });
+
+  });
+
+}
+
+
+/**
+ * @api {delete} /sessions/:session?session=auth_session Delete session
+ * @apiVersion 0.7.4
+ * @apiName DeleteSession
+ * @apiGroup User
+ *
+ * @apiParam {String} session       Session
+ * @apiParam {String} auth_session  Authenticated session
+ *
+ * @apiSuccess {Object} code   Status Code
+ * 
+ * @apiError IncorrectData     Incorrect input data
+ * @apiError SessionNotFound   Username not found
+ * @apiError Forbidden         Session not exist
+ */
+module.exports.sessionDELETE = function (req, res) {
+
+  // Check input data
+  if(typeof(req.params.session) === 'undefined' || typeof(req.query.auth_session) === 'undefined') {
+
+    // Log this
+    log.error("Important API parameters undefined from " + req.connection.remoteAddress);
+
+    // Return error
+    res.status(400);
+    res.json({ code: 400, description: 'Important parameter(s) undefined' });
+
+    // Exit
+    return;
+
+  }
+
+  // Check using RegExp
+  if( req.params.session.length != 32 || req.query.auth_session.length != 32 || !(/^[0-9A-Fa-f]+$/).test(req.params.session) || !(/^[0-9A-Fa-f]+$/).test(req.query.auth_session) ) {
+
+    // Log this
+    log.error("Important API parameters incorrect from " + req.connection.remoteAddress);
+
+    // Return error
+    res.status(400);
+    res.json({ code: 400, description: 'Important parameter(s) was incorrect' });
+
+    // Exit
+    return;
+
+  }
+
+  // Try to authenticate session
+  userProvider.getSessionInformation(req.query.auth_session, function (err, data) {
+
+    // Session error
+    if(err) {
+
+      // Log this
+      log.error(err.message + " from " + req.connection.remoteAddress);
+
+      // Send error
+      res.status(err.errorCode);
+      res.json({ code: err.errorCode, description: err.message });
+
+      // Exit
+      return;
+
+    }
+
+    // Get information about requested session
+    userProvider.deauthenticateSession(req.params.session, function (err, data) {
+
+      // Session error
+      if(err) {
+
+        // Log this
+        log.error(err.message + " from " + req.connection.remoteAddress);
+
+        // Send error
+        res.status(err.errorCode);
+        res.json({ code: err.errorCode, description: err.message });
+
+        // Exit
+        return;
+
+      }
+
+      // Return session
+      res.json({ code: 200 });
+      
+      // Exit
+      return;
+
+    });
+
+  });
+
+}
+
+
+/**
+ * @api {put} /sessions/?username=username&password=password Authenticate username + password
+ * @apiVersion 0.7.4
+ * @apiName AuthenticateUsernamePassword
+ * @apiGroup User
+ *
+ * @apiParam {String} username  Username
+ * @apiParam {String} password  Password
+ *
+ * @apiSuccess {Object} code     Status Code
+ * @apiSuccess {Object} session  Session
+ * 
+ * @apiError IncorrectData    Incorrect input data
+ * @apiError InvalidData      Invalid input data
+ * @apiError TooManyRequests  Too many authentication requests
+ */
+module.exports.sessionPUT = function (req, res) {
+
+  // Check authentication attempts
+  redisClient.get('rhcs:attempts:' + req.connection.remoteAddress, function (err, data) {
+  
+    // Catch error
+    if(err) {
+    
+      // Log this
+      log.error('Redis ' + err);
+      
+      // Return IntSrvErr code
+      res.status(500);
+      res.json({ code: 500, description: 'Internal Server Error' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Seems like we have at least one failed authentication attempt
+    if(data) {
+    
+      // Parse JSON
+      data = JSON.parse(data);
+      
+      // Check attempts count
+      if(data.attempt == configuration.authenticationSettings.maxInvalidAttempts) {
+      
+        // Check banned timestamp
+        var curTimestamp = Math.floor(Date.now() / 1000);
+        
+        // Ban still active
+        if((data.timestamp + configuration.authenticationSettings.banInterval) > curTimestamp) {
+        
+          // Log this
+          log.warn('Too many authentication requests from ' + req.connection.remoteAddress);
+          
+          // Return error
+          res.status(429);
+          res.json({ code: 429, description: 'Too many authentication attempts', retry_after: data.timestamp + configuration.authenticationSettings.banInterval })
+          
+          // Exit
+          return;
+        
+        }
+        
+        // Ban timeout ended
+        else {
+        
+          // Delete ban entity
+          redisClient.del('rhcs:attempts:' + req.connection.remoteAddress);
+        
+        }
+      
+      }
+    
+    }
+    
+    // Check input data
+    if(typeof(req.query.username) == 'undefined' || typeof(req.query.password) == 'undefined' || req.query.username.length < 3 || req.query.password.length < 3) {
+    
+      // Log this
+      log.warn('Incorrect input data given from ' + req.connection.remoteAddress);
+      
+      // Return error
+      res.status(400);
+      res.json({ code: 400, description: 'Incorrect data given' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Authenticate it
+    userProvider.authenticateUsername(req.query.username, req.query.password, function (err, adata) {
+      
+      // Error
+      if(err) {
+
+        // Log this
+        log.error(err.message + " from " + req.connection.remoteAddress);
+
+        // Handle error code
+        if(err.errorCode == 500) {
+          
+          // Return error code
+          res.status(500);
+          res.json({ code: 500, description: 'Internal Server Error' });
+          
+          // Exit
+          return;
+        
+        }
+
+        else {
+          
+          // Return error code
+          res.status(400);
+          res.json({ code: 400, description: 'Invalid input data' });
+
+          // Update ban information
+          redisClient.get('rhcs:attempts:' + req.connection.remoteAddress, function (err, data) {
+
+            // Catch error
+            if(err) {
+
+              // Log this
+              log.error('Redis ' + err);
+
+              // Return IntSrvErr code
+              res.status(500);
+              res.json({ code: 500, description: 'Internal Server Error' });
+
+              // Exit
+              return;
+
+            }
+            
+            if(data) {
+              
+              // Update invalid attempts counter & last timestamp
+              data = JSON.parse(data);
+              data.attempt++;
+              data.timestamp = Math.floor(Date.now() / 1000);
+              
+            }
+            
+            else {
+
+              data = { attempt: 1, timestamp: Math.floor(Date.now() / 1000) };
+            
+            }
+            
+            // Save new data
+            redisClient.set('rhcs:attempts:' + req.connection.remoteAddress, JSON.stringify(data));
+
+            // Exit
+            return;
+          
+          });
+        
+        }
+
+      }
+      
+      if(!err) {
+        
+        // Return session
+        res.json({ code: 200, session: adata.session });
+      
+        // Exit
+        return;
+        
+      }
+    
+    });
+  
   });
 
 }

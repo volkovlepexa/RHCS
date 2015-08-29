@@ -60,8 +60,6 @@ indigo.use(function(req, res, next) {
 
 });
 
-// @TODO: Вынести весь API с роутерами в отдельные модули
-
 // Indigo Main Router
 var indigoRouter = express.Router();
 indigo.use('/api/v1', indigoRouter);
@@ -73,4 +71,11 @@ indigoRouter.route('/users/:username')
   .get(userAPIModule.userGET)
   .post(userAPIModule.userPOST)
   .delete(userAPIModule.userDELETE)
-  .put(userAPIModule.userPUT)
+  .put(userAPIModule.userPUT);
+
+indigoRouter.route('/sessions/:session')
+  .get(userAPIModule.sessionGET)
+  .delete(userAPIModule.sessionDELETE);
+
+indigoRouter.route('/sessions/')
+  .put(userAPIModule.sessionPUT);

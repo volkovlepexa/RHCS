@@ -194,7 +194,7 @@ module.exports.deauthenticateSession = function ( session, callback ) {
  * User.getSessionInformation - get information about session
  * @param   {String} session Session
  * @param   {Function} callback Callback
- * @returns {Function} Callback with boolean
+ * @returns {Function} Callback with session information
  */
 module.exports.getSessionInformation = function ( session, callback ) {
 

@@ -59,7 +59,7 @@ configuration.authenticationSettings = {
   maxInvalidAttempts: 6,
 
   // Ban timeout (in seconds)
-  banInterval: 60,
+  banInterval: 300,
 
   // Additional global password hash parameter
   pepper: "ed36b6aa92c6293a02e7b2cc79704b56",
