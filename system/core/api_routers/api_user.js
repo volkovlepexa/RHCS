@@ -725,7 +725,7 @@ module.exports.sessionPUT = function (req, res) {
     }
     
     // Check input data
-    if(typeof(req.query.username) == 'undefined' || typeof(req.query.password) == 'undefined' || req.query.username.length < 3 || req.query.password.length < 3) {
+    if(typeof(req.body.username) == 'undefined' || typeof(req.body.password) == 'undefined' || req.body.username.length < 3 || req.body.password.length < 3) {
     
       // Log this
       log.warn('Incorrect input data given from ' + req.connection.remoteAddress);
@@ -740,7 +740,7 @@ module.exports.sessionPUT = function (req, res) {
     }
     
     // Authenticate it
-    userProvider.authenticateUsername(req.query.username, req.query.password, function (err, adata) {
+    userProvider.authenticateUsername(req.body.username, req.body.password, function (err, adata) {
       
       // Error
       if(err) {

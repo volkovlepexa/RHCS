@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   
+    <!-- Title -->
+    <title>RHCS &bull; Authentication</title>
+    
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- CSS -->
+    <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="/assets/css/app.css" media="screen,projection" />
+    
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <form id="loginForm" class="col s12">
+          
+          <!-- Heading -->
+          <h2 class="flow-text">Authentication required</h2>
+          
+          <!-- Username field -->
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="username" type="text" min="3" class="validate">
+              <label for="username">Username</label>
+            </div>
+          </div>
+          
+          <!-- Password field -->
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="password" type="password" min="3" class="validate">
+              <label for="password">Password</label>
+            </div>
+          </div>
+          
+          <!-- Submit -->
+          <button class="waves-effect waves-light btn-large" id="loginAction">Login</button>
+          
+        </form>
+      </div>
+    </div>  
+    
+    <!-- JS -->
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/assets/js/utils.js"></script>
+    <script type="text/javascript" src="/assets/js/app.js"></script>
+    
+  </body>
+</html>
