@@ -25,10 +25,12 @@ log.info("Bootstrapping..");
 
 // Load configuration
 var configuration = require('./system/core/configuration.js');
-var userProvider = require('./system/core/providers/user_provider.js');
 
 // Attach Redis from factory
-redisClient = require('./system/core/redis_factory.js').init( mag, configuration );
+redisClient = require('./system/core/redisFactory.js');
+
+// Load providers
+var userProvider = require('./system/core/providers/user_provider.js');
 
 // Log
 log.debug('Attaching Express..');
@@ -37,7 +39,7 @@ log.debug('Attaching Express..');
 var indigo = require('express')();
 
 // Create listeners
-require('./system/core/server_init.js')( mag, indigo, fs, configuration );
+require('./system/core/indigoServerInit.js')( mag, indigo, fs, configuration );
 
 // Static data route
 indigo.use('/assets', express.static('./system/template/assets'));

@@ -9,7 +9,7 @@
 */
 
 // Utils
-var util = require('util');
+var indigoUtils = require('../indigoUtils.js');
 
 // Attaching Logger
 var log = require('mag')('UserModule');
@@ -21,21 +21,10 @@ var crypto = require('crypto');
 var configuration = require('../configuration.js');
 
 // Attaching Redis
-var redisClient = require('../redis_factory.js').init( require('mag'), configuration );
+var redisClient = require('../redisFactory.js');
 
-// Authentication Error
-function AuthenticationError( settings, implementationContext ) {
-
-  settings = ( settings || {} );  
-  this.name = "AuthenticationError";
-  this.message = ( settings.message || "An error occurred." );
-  this.errorCode = ( settings.errorCode || "" );
-  Error.captureStackTrace( this, AuthenticationError  );
-
-}
-
-// Merge Error and AuthenticationError
-util.inherits( AuthenticationError, Error );
+// Load utils
+var AuthenticationError = require('../particles/indigoError.js');
 
 /**
  * User.authenticateUsername - authenticating user via username + password
@@ -119,7 +108,7 @@ module.exports.authenticateUsername = function ( username, password, callback ) 
     var session = crypto.createHash('md5').update(((Math.random() * (999999 - 100000) + 100000) + Math.floor(Date.now())) + 'i3t3ap0t' ).digest('hex');
     
     // Save session
-    redisClient.set('rhcs:sessions:' + session,JSON.stringify({ username: username, timestamp: Math.floor(Date.now() / 1000) }));
+    redisClient.set('rhcs:sessions:' + session,JSON.stringify({ username: username, timestamp: indigoUtils.getUnixTimestamp() }));
     
     // Return success callback
     return callback(undefined, { session: session });
