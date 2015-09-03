@@ -27,4 +27,4 @@ build/Release
 node_modules
 
 # Configuration will be only master
-system/core/configuration.js
+configuration.js
