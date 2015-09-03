@@ -11,6 +11,7 @@
 function IndigoError ( settings, implementationContext ) {
 
   settings = ( settings || {} );  
+  this.name = ( settings.name || "IndigoError" );
   this.message = ( settings.message || "An error occurred." );
   this.errorCode = ( settings.errorCode || "" );
   Error.captureStackTrace( this, IndigoError  );

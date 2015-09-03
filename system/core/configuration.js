@@ -33,7 +33,7 @@ configuration.redis = {
   usePassword: true,
 
   // Password
-  password: 'furetnth',
+  password: 'thewombats1996',
 
   // Redis can handle amounts of databases.
   // Default, connected client (without SELECT query) using database with index '0'
@@ -73,7 +73,7 @@ configuration.authenticationSettings = {
 configuration.rootDirectory = { 
 
   // Installation directory
-  root: '/mnt/Storage/Devworlds/RHCS/indigo'
+  root: '/var/www/rhcs'
 
 }
 
