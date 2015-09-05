@@ -12,7 +12,7 @@
     <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="/assets/css/app.css" media="screen,projection" />
     
-    <style>body {background: #ddd;}</style>
+    <script>window.rhcs = {pageMarker: 'main'};</script>
 
   </head>
 
@@ -43,6 +43,7 @@
          
     <div class="container">
       
+      <!-- First row -->
       <div class="row">
         
         <!-- Information -->
@@ -90,11 +91,6 @@
             <div class="card-content white-text">
 
               <span class="card-title">Освещение</span>
-
-              <!--
-<p class="range-field"><input type="range" id="" min="0" max="100" /></p>
-<p class="range-field"><input type="range" id="test5" min="0" max="100" /></p>
--->
 
               <div class="switch">
                 <label>
@@ -156,15 +152,15 @@
         
       </div>
       
+      <!-- Second row -->
       <div class="row">
         
         <!-- Camera -->
         <div class="col s12 m6">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
-              <span class="card-title">Camera One</span>
-              <img src="http://192.168.1.101:8080/?action=stream" alt="" class="responsive-img">
-              <!--<img src="http://placehold.it/1024x768" alt="" class="responsive-img">-->
+              <span class="card-title">Camera One</span><br>
+              <img id="cameraStream" alt="Camera stream" class="responsive-img">
             </div>
           </div>
         </div>
