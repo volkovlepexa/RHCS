@@ -49,3 +49,5 @@ $('#loginForm').on('submit', function (event) {
   return;
   
 });
+
+$(".button-collapse").sideNav();

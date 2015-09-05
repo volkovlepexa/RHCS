@@ -433,6 +433,7 @@ gpio.aread = function (deviceName, pinNumber, callback) {
 
 }
 
+
 var dht = {};
 
 /**

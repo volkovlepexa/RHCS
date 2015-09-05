@@ -1,1 +1,243 @@
-main
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <!-- Title -->
+    <title>RHCS &bull; Dashboard</title>
+
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS -->
+    <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="/assets/css/app.css" media="screen,projection" />
+    
+    <style>body {background: #ddd;}</style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation bar -->
+    <nav>
+      <div class="nav-wrapper">
+       &nbsp;&nbsp;
+        <a href="/page/main" class="brand-logo">RHCS</a>
+        <a href="#" data-activates="mobileNavbar" class="button-collapse">&nbsp;&nbsp;MENU</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/page/main">Dashboard</a></li>
+          <li><a href="/page/controls">Controls</a></li>
+          <li><a href="/page/settings">Settings</a></li>
+          <li><a href="/page/logout">Logout</a></li>
+        </ul>
+        <ul class="side-nav" id="mobileNavbar">
+          <li><a href="/page/main">Dashboard</a></li>
+          <li><a href="/page/controls">Controls</a></li>
+          <li><a href="/page/settings">Settings</a></li>
+          <li><a href="/page/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <br>
+         
+    <div class="container">
+      
+      <div class="row">
+        
+        <!-- Information -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+
+            <div class="card-content white-text">
+
+              <b>Novosibirsk &bull; NOVT UTC+6</b>
+              <h3 id="dashboard-widget-time">15:15</h3>
+
+              <div class="valign-wrapper">
+                <i class="small mdi-action-event"></i>
+                <b class="valign" id="dashboard-widget-date">&nbsp;&nbsp;5th September 2015</b>
+              </div>
+
+              <div class="valign-wrapper">
+                <i class="small mdi-maps-traffic"></i>
+                <b class="valign" id="dashboard-widget-traffic">&nbsp;&nbsp;3 балла</b>
+              </div>
+
+              <div class="valign-wrapper">
+                <i class="small mdi-file-cloud"></i>
+                <b class="valign" id="dashboard-widget-weather">&nbsp; 15&deg; Ясно</b>
+              </div>
+
+              <div class="valign-wrapper">
+                <i class="small mdi-editor-attach-money"></i>
+                <b class="valign" id="dashboard-widget-currate">&nbsp;&nbsp; Рубль на дне</b>
+              </div>
+
+              <div class="valign-wrapper">
+                <i class="small mdi-toggle-check-box"></i>
+                <b class="valign" id="dashboard-widget-state">&nbsp;&nbsp; System OK</b>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+       
+        <!-- Lighting -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+
+              <span class="card-title">Освещение</span>
+
+              <!--
+<p class="range-field"><input type="range" id="" min="0" max="100" /></p>
+<p class="range-field"><input type="range" id="test5" min="0" max="100" /></p>
+-->
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Подсветка на кухне</b>
+                </label>
+              </div>
+
+              <br>
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Подсветка в корридоре</b>
+                </label>
+              </div>
+
+              <br>
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Люстра в комнате</b>
+                </label>
+              </div>
+
+              <br>
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Лампа над кроватью</b>
+                </label>
+              </div>
+
+              <br>
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Лампа над столом</b>
+                </label>
+              </div>
+
+              <br>
+
+            </div>
+            <div class="card-action">
+              <a href="#">Включить</a>
+              <a href='#'>Выключить</a>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="row">
+        
+        <!-- Camera -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Camera One</span>
+              <img src="http://192.168.1.101:8080/?action=stream" alt="" class="responsive-img">
+              <!--<img src="http://placehold.it/1024x768" alt="" class="responsive-img">-->
+            </div>
+          </div>
+        </div>
+
+        <!-- Electricity -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+
+              <span class="card-title">Электроэнергия</span>
+
+              <!--
+<p class="range-field"><input type="range" id="" min="0" max="100" /></p>
+<p class="range-field"><input type="range" id="test5" min="0" max="100" /></p>
+-->
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Сетевой удлинитель</b>
+                </label>
+              </div>
+
+              <br>
+
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  &nbsp; <b>Network Stack</b>
+                </label>
+              </div>
+
+            </div>
+            <div class="card-action">
+              <a href="#">Включить</a>
+              <a href='#'>Выключить</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Plant -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+
+            <div class="card-content white-text">
+              <span class="card-title">Растения</span><br>
+              <b>
+
+                Ficus Benjamina
+                <div class="progress"><div class="determinate" style="width: 71%"></div></div>
+
+                <br>
+
+                Viola
+                <div class="progress"><div class="determinate" style="width: 45%"></div></div>
+
+              </b>
+            </div>
+
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>  
+
+    <!-- JS -->
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/assets/js/utils.js"></script>
+    <script type="text/javascript" src="/assets/js/app.js"></script>
+
+  </body>
+</html>
