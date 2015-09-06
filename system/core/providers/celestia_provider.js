@@ -159,7 +159,7 @@ gpio.awrite = function (deviceName, pinNumber, pinValue, callback) {
   }
 
   // Check port and value
-  if(typeof(pinNumber) != 'number' || typeof(pinValue) != 'number' || (pinValue < 0 || pinValue > 255) ) {
+  if((pinValue < 0 || pinValue > 255) ) {
 
     // Return error callback
     return callback(new indigoError({ message: 'Incorrect port or PWM duty', errorCode: 400 }));
@@ -463,7 +463,7 @@ dht.read = function (deviceName, pinNumber, sensorModel, callback) {
   }
   
   // Check sensor type
-  if(sensorModel != 11 || sensorModel != 21 || sensorModel != 22) {
+  if(sensorModel != 11 && sensorModel != 21 && sensorModel != 22) {
   
     // Return error callback
     return callback(new indigoError({ message: 'Invalid sensor model', errorCode: 400 }));
@@ -528,7 +528,7 @@ dht.read = function (deviceName, pinNumber, sensorModel, callback) {
         if(celestiaData.code == 200) {
 
           // Return successfull callback 
-          return callback(undefined, { temperature: celestiaData.t, humidity: celestiaData.h });
+          return callback(undefined, { temperature: celestiaData.tc, humidity: celestiaData.hp });
 
         }
 

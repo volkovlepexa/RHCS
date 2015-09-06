@@ -29,7 +29,7 @@ module.exports = function (mag, indigo, fs, configuration) {
     log.debug("Creating HTTPS server..");
 
     // securedServer - Server with encryption (default port: 1385)
-    var securedServer = require('https').createServer(tlsData, indigo);
+    securedServer = require('https').createServer(tlsData, indigo);
     securedServer.listen(configuration.indigoWebserverPorts.httpsPort);
 
   } catch (e) {
@@ -49,7 +49,7 @@ module.exports = function (mag, indigo, fs, configuration) {
   log.debug("Creating HTTP server..");
 
   // plainServer - Server with encryption (default port: 1384)
-  var plainServer = require('http').createServer(indigo);
+  plainServer = require('http').createServer(indigo);
   plainServer.listen(configuration.indigoWebserverPorts.httpPort);
 
 }

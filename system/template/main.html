@@ -94,58 +94,38 @@
 
               <div class="switch">
                 <label>
-                  <input type="checkbox">
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="2" data-thinggroup="lighting">
                   <span class="lever"></span>
-                  &nbsp; <b>Подсветка на кухне</b>
+                  &nbsp; <b>Лампа #1</b>
                 </label>
-              </div>
-
-              <br>
-
+              </div><br>
+              
               <div class="switch">
                 <label>
-                  <input type="checkbox">
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="3" data-thinggroup="lighting">
                   <span class="lever"></span>
-                  &nbsp; <b>Подсветка в корридоре</b>
+                  &nbsp; <b>Лампа #2</b>
                 </label>
-              </div>
-
-              <br>
-
-              <div class="switch">
+              </div><br>
+              
+              <div>
                 <label>
-                  <input type="checkbox">
-                  <span class="lever"></span>
-                  &nbsp; <b>Люстра в комнате</b>
+                  <b>Лампа #3</b>
+                  <p class="range-field"><input type="range" onchange="pushNewValue(this)" data-thingid="4" data-thinggroup="lighting" min="0" max="255" /></p>
                 </label>
-              </div>
-
-              <br>
-
-              <div class="switch">
+              </div><br>
+              
+              <div>
                 <label>
-                  <input type="checkbox">
-                  <span class="lever"></span>
-                  &nbsp; <b>Лампа над кроватью</b>
+                  <b>Лампа #4</b>
+                  <p class="range-field"><input type="range" onchange="pushNewValue(this)" data-thingid="5" data-thinggroup="lighting" min="0" max="255" /></p>
                 </label>
               </div>
-
-              <br>
-
-              <div class="switch">
-                <label>
-                  <input type="checkbox">
-                  <span class="lever"></span>
-                  &nbsp; <b>Лампа над столом</b>
-                </label>
-              </div>
-
-              <br>
 
             </div>
             <div class="card-action">
-              <a href="#">Включить</a>
-              <a href='#'>Выключить</a>
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="lighting">ON</button>
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="lighting">OFF</button>
             </div>
           </div>
         </div>
@@ -171,17 +151,12 @@
             <div class="card-content white-text">
 
               <span class="card-title">Электроэнергия</span>
-
-              <!--
-<p class="range-field"><input type="range" id="" min="0" max="100" /></p>
-<p class="range-field"><input type="range" id="test5" min="0" max="100" /></p>
--->
-
+              
               <div class="switch">
                 <label>
-                  <input type="checkbox">
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="0" data-thinggroup="electricity">
                   <span class="lever"></span>
-                  &nbsp; <b>Сетевой удлинитель</b>
+                  &nbsp; <b>Розетка №1</b>
                 </label>
               </div>
 
@@ -189,16 +164,18 @@
 
               <div class="switch">
                 <label>
-                  <input type="checkbox">
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="1" data-thinggroup="electricity">
                   <span class="lever"></span>
-                  &nbsp; <b>Network Stack</b>
+                  &nbsp; <b>Розетка №2</b>
                 </label>
               </div>
 
             </div>
             <div class="card-action">
-              <a href="#">Включить</a>
-              <a href='#'>Выключить</a>
+              
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="electricity">ON</button>
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="electricity">OFF</button>
+              
             </div>
           </div>
         </div>
@@ -230,6 +207,7 @@
     </div>  
 
     <!-- JS -->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="/assets/js/utils.js"></script>

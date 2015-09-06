@@ -19,9 +19,9 @@ function myLovelyDebugger(err, data) {
 }
 
 //celestia.gpio.dwrite('celone', 13, 0, function (err, data) { myLovelyDebugger(err, data) });
-//celestia.gpio.awrite('celone', 13, 0, function (err, data) { myLovelyDebugger(err, data) });
+celestia.gpio.awrite('celone', 3, 0, function (err, data) { myLovelyDebugger(err, data) });
 
 //celestia.gpio.aread('celone', 2, function (err, data) { myLovelyDebugger(err, data) });
 //celestia.gpio.dread('celone', 22, function (err, data) { myLovelyDebugger(err, data) });
 
-//celestia.dht.read('celone', 34, 22, function (err, data) { myLovelyDebugger(err, data); });
+//celestia.dht.read('celone', 22, 11, function (err, data) { myLovelyDebugger(err, data); });

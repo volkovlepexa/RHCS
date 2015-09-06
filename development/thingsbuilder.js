@@ -1,0 +1,11 @@
+var redis = require('../system/core/redisFactory');
+redis.set('rhcs:celestia_thing:0', '{"parent": "celone", "description": "Socket One", "type": "do", "pin": 22, "value": 0}');
+redis.set('rhcs:celestia_thing:1', '{"parent": "celone", "description": "Socket Two", "type": "do", "pin": 23, "value": 0}');
+redis.set('rhcs:celestia_thing:2', '{"parent": "celone", "description": "Lamp #1", "type": "do", "pin": 24, "value": 0}');
+redis.set('rhcs:celestia_thing:3', '{"parent": "celone", "description": "Lamp #2", "type": "do", "pin": 25, "value": 0}');
+redis.set('rhcs:celestia_thing:4', '{"parent": "celone", "description": "Lamp #3", "type": "ao", "pin": 13, "value": 0}');
+redis.set('rhcs:celestia_thing:5', '{"parent": "celone", "description": "Lamp #4", "type": "ao", "pin": 3, "value": 0}');
+redis.set('rhcs:celestia_thing:6', '{"parent": "celone", "description": "Robot One Start", "type": "xbs", "payload": "003:rtbot:1" }');
+redis.set('rhcs:celestia_thing:7', '{"parent": "celone", "description": "Robot One Home", "type": "xbs", "payload": "003:rtbot:0" }');
+redis.set('rhcs:celestia_thing:8', '{"parent": "celone", "description": "Robot Two Start", "type": "xbs", "payload": "004:rtbot:1" }');
+redis.set('rhcs:celestia_thing:9', '{"parent": "celone", "description": "Robot Two Home", "type": "xbs", "payload": "004:rtbot:0" }');

@@ -127,7 +127,104 @@ if(window.rhcs.pageMarker == 'main') {
   setInterval(updateTimeWidget, 1000);
   setInterval(updateDateWidget, 60000);
   
+  // All the things
+  window.rhcs.thingsList = [];
+  
   // In default mode we just show the screenshot
   document.getElementById('cameraStream').setAttribute('src', 'http://' + window.location.hostname + ':8080/?action=stream');
+  
+  // Connect to socket server
+  var socket = io.connect('https://' + window.location.hostname + ':1385');
+  
+  // Callback
+  socket.on('mosi', function (data) {
+    
+    if(data.payloadType == 'thingState') {
+    
+      // Log
+      console.log('thingUpdate: ' + data.thingID + ':' + data.value);
+      
+      // Checkbox
+      if(window.rhcs.thingsList[data.thingID].getAttribute('type') == 'checkbox') { window.rhcs.thingsList[data.thingID].checked = data.value; }
+      
+      // Range
+      else { window.rhcs.thingsList[data.thingID].value = data.value; }
+    
+    }
+    
+  });
+  
+  // Push new value throw socket.io
+  function pushNewValue(element) {
+
+    var thingID = element.dataset.thingid;
+
+    // For checkbox
+    if(element.getAttribute('type') == 'checkbox') { socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.checked + 0 }); }
+
+    // For range
+    else if(element.getAttribute('type') == 'range') { socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.value }); }
+    
+    console.log(element.checked);
+    console.log(element.value);
+
+  }
+
+
+  // Enumerate things
+  $('input[type=checkbox],input[type=range]').each(function (num, element) {
+
+    // Get element id
+    var elementThingID = element.dataset.thingid;
+
+    // Save to pointer list
+    window.rhcs.thingsList[elementThingID] = element;
+
+  });
+  
+  // Request values
+  function refreshValues() {
+    
+    window.rhcs.thingsList.forEach(function (item, i) {
+
+    socket.emit('miso', { taskName: 'GTV', session: getCookie('rhcsSession'), thingID: i });
+
+  });
+    
+  }
+  refreshValues();
+  
+  // Change group state
+  function switchGroupState(element, value) {
+
+    // Scan all things on page
+    window.rhcs.thingsList.forEach(function (item, num) {
+
+      // Select group
+      if(item.dataset.thinggroup == element.dataset.thinggroup) {
+
+        // Checkbox
+        if(item.getAttribute('type') == 'checkbox') {
+          
+          socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: num, value: value });
+          item.checked = value;
+        
+        }
+
+        // Range
+        else if(item.getAttribute('type') == 'range') {
+          
+          // Universal solution in each situation
+          if(value === 1) { value = 255; }
+          socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: num, value: value });
+          item.value = value;
+        
+        }
+
+      }
+
+    });
+
+  }
 
 }

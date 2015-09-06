@@ -11,6 +11,7 @@
 // Modules
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
+var socketio = require('socket.io');
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
@@ -66,6 +67,9 @@ indigo.use(function(req, res, next) {
 
 // Attach Users API Module
 var userAPIModule = require('./system/core/api_routers/api_user.js');
+
+// Attach Celestia module
+var celestiaProvider = require('./system/core/providers/celestia_provider.js');
 
 // Indigo Routing
 var indigoAPIRouter = express.Router();
@@ -299,3 +303,180 @@ indigoAPIRouter.route('/sessions/:session')
 
 indigoAPIRouter.route('/sessions/')
   .put(userAPIModule.sessionPUT);
+
+
+// Create socket.io listners
+var randall = require('socket.io')(securedServer);
+
+// Socket.IO API
+randall.on('connection', function (socket) {
+
+  var log = require('mag')('RandallServer');
+  
+  // @FUTURE: Authentication for sockets
+  // ANCHOR RHCS.SOCKETIO.HANDLERS
+  log.debug('New socket client from ' + socket.handshake.address);
+
+  // Run client task
+  socket.on('miso', function (data) {
+
+    // Check important parameters
+    if(typeof(data.session) == 'undefined' || typeof(data.taskName) == 'undefined') {
+
+      // Log it
+      log.error('Important data not defined from ' + socket.handshake.address);
+
+      // Exit
+      return;
+
+    }
+    
+    // Incorrect data given
+    if(data.session.length != 32 || !(/^[0-9A-Fa-f]+$/).test(data.session)) {
+    
+      // Log it
+      log.error('Incorrect data defined from ' + data.address);
+
+      // Exit
+      return;
+    
+    }
+
+    // Attempt to authenticate session
+    userProvider.getSessionInformation(data.session, function (err) {
+    
+      // Catch error
+      if(err) {
+      
+        // Log error
+        log.warn(err + ' from ' + socket.handshake.address);
+        
+        // Exit
+        return;
+      
+      }
+      
+      // Task One: GET value
+      if(data.taskName == 'GTV') {
+        
+        // Get thing info
+        redisClient.get('rhcs:celestia_thing:' + data.thingID, function (err, thingData) {
+        
+          // Catch redis error
+          if(err) {
+          
+            // Log
+            log.error('Redis ' + err);
+            
+            // Exit
+            return;
+          
+          }
+          
+          // Thing not existing
+          if(!thingData) {
+          
+            // Log
+            log.warn('Requested thing not exist from ' + socket.handshake.address);
+            
+            // Exit
+            return;
+          
+          }
+          
+          // Parse
+          thingData = JSON.parse(thingData);
+          
+          // Return value
+          socket.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: thingData.value });
+
+          // Exit
+          return;
+        
+        });
+      
+      }
+      
+      // Task Two: SET value
+      else if(data.taskName == 'PTV') {
+      
+        // Get thing info
+        redisClient.get('rhcs:celestia_thing:' + data.thingID, function (err, thingData) {
+
+          // Catch redis error
+          if(err) {
+
+            // Log
+            log.error('Redis ' + err);
+
+            // Exit
+            return;
+
+          }
+
+          // Thing not existing
+          if(!thingData) {
+
+            // Log
+            log.warn('Requested thing not exist from ' + socket.handshake.address);
+
+            // Exit
+            return;
+
+          }
+
+          // Parse
+          thingData = JSON.parse(thingData);
+          
+          // Call the force
+          if(thingData.type == 'do') {
+          
+            celestiaProvider.gpio.dwrite(thingData.parent, thingData.pin, data.value, function (err) {
+            
+              // Catch error
+              if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); }
+              
+              // Publish new value
+              socket.broadcast.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: data.value });
+              
+              // Update socket value
+              thingData.value = data.value;
+              redisClient.set('rhcs:celestia_thing:' + data.thingID, JSON.stringify(thingData));
+              
+              // Exit
+              return;
+            
+            });
+          
+          }
+          
+          else if(thingData.type == 'ao') {
+
+            celestiaProvider.gpio.awrite(thingData.parent, thingData.pin, data.value, function (err) {
+
+              // Catch error
+              if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); throw err; }
+
+              // Publish new value
+              socket.broadcast.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: data.value });
+
+              // Update socket value
+              thingData.value = data.value;
+              redisClient.set('rhcs:celestia_thing:' + data.thingID, JSON.stringify(thingData));
+              
+              // Exit
+              return;
+
+            });
+          
+          }
+
+        });
+      
+      }
+      
+    });
+
+  });
+
+});
