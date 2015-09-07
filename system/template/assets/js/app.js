@@ -226,5 +226,50 @@ if(window.rhcs.pageMarker == 'main') {
     });
 
   }
+  
+  // Get HVAC state 
+  window.rhcs.hvacModes = [ "cool", "heat", "dry", "fan" ];
+  window.rhcs.hvacState = 0;
+
+  document.getElementById('hvacbutton').innerHTML = window.rhcs.hvacModes[window.rhcs.hvacState];
+
+  function changeHVACMode() {
+
+    if(window.rhcs.hvacState == 3) {
+
+      document.getElementById('hvacbutton').innerHTML = window.rhcs.hvacModes[0];
+      window.rhcs.hvacState = 0;
+
+    }
+
+    else {
+
+      document.getElementById('hvacbutton').innerHTML = window.rhcs.hvacModes[window.rhcs.hvacState + 1];
+      window.rhcs.hvacState++;
+
+    }
+
+  }
+  
+  // Get HVAC state 
+  window.rhcs.hvacPWRModes = [ "off", "on" ];
+  window.rhcs.hvacPWRState = 0;
+
+  document.getElementById('hvacpowerbutton').innerHTML = window.rhcs.hvacPWRModes[window.rhcs.hvacPWRState];
+
+  function changeHVACPower() {
+
+    if(window.rhcs.hvacPWRState == 0) { window.rhcs.hvacPWRState = 1; }
+    else { window.rhcs.hvacPWRState = 0; }
+    document.getElementById('hvacpowerbutton').innerHTML = window.rhcs.hvacPWRModes[window.rhcs.hvacPWRState];
+
+  }
+  
+  function updateTarget(element) {
+  
+    var temp = element.value;
+    document.getElementById('targettemp').innerHTML = temp + '&deg';
+  
+  }
 
 }
