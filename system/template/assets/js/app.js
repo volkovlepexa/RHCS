@@ -131,7 +131,7 @@ if(window.rhcs.pageMarker == 'main') {
   window.rhcs.thingsList = [];
   
   // In default mode we just show the screenshot
-  document.getElementById('cameraStream').setAttribute('src', 'http://' + window.location.hostname + ':8080/?action=stream');
+  document.getElementById('cameraStream').setAttribute('src', 'http://' + window.location.hostname + ':8085/?action=stream');
   
   // Connect to socket server
   var socket = io.connect('https://' + window.location.hostname + ':1385');
@@ -165,8 +165,7 @@ if(window.rhcs.pageMarker == 'main') {
     // For range
     else if(element.getAttribute('type') == 'range') { socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.value }); }
     
-    console.log(element.checked);
-    console.log(element.value);
+    console.log('thingPush: ' + element.checked + ' | ' + element.value);
 
   }
 
