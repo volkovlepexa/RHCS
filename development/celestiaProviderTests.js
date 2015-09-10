@@ -25,4 +25,9 @@ function myLovelyDebugger(err, data) {
 //celestia.gpio.dread('celone', 22, function (err, data) { myLovelyDebugger(err, data) });
 
 //celestia.dht.read('celone', 36, 11, function (err, data) { myLovelyDebugger(err, data); });
-celestia.ow.discovery('celone', 29, function (err, data) { myLovelyDebugger(err, data); });
+//celestia.ow.discovery('celone', 29, function (err, data) { myLovelyDebugger(err, data); });
+//console.log(celestia.ow.convertAddress(["0x28", "0xb1", "0xcf", "0xd7", "0x02", "0x00", "0x00", "0xab"]));
+
+//celestia.ow.readDS18B20('celone', 29, celestia.ow.convertAddress(["0x28", "0x2a", "0xc9", "0xe4", "0x04", "0x00", "0x00", "0x6f"]), function (err, data) {myLovelyDebugger(err, data); });
+
+//celestia.servo.rotateServo('celone', 0, 0, function (err, data) { myLovelyDebugger(err, data); });
