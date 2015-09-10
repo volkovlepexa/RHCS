@@ -24,6 +24,7 @@
     OW
       OWDS18B20
       OWDISCOVERY
+      OWCONVERTADDRESS
       
     SYS
       IDENTIFY
@@ -543,5 +544,109 @@ dht.read = function (deviceName, pinNumber, sensorModel, callback) {
 
 }
 
+var ow = {};
+
+/**
+ * OW.DISCOVERY - Discovery 1-Wire bus
+ * @param   {String}   deviceName Device name
+ * @param   {Integer}  pinNumber  Bus pin
+ * @returns {Function} Callback
+ */
+
+ow.discovery = function (deviceName, pinNumber, callback) {
+
+  // Check input values
+  if(deviceName.length < 3 || !(/^[\w.@]+$/).test(deviceName)) {
+
+    // Return error callback
+    return callback(new indigoError({ message: 'Incorrect device name', errorCode: 400 }));
+
+  }
+
+  // Check port and value
+  if(typeof(pinNumber) != 'number') {
+
+    // Return error callback
+    return callback(new indigoError({ message: 'Incorrect port', errorCode: 400 }));
+
+  }
+
+  // Get device data from DB
+  redisClient.get('rhcs:devices:' + deviceName, function (err, data) {
+
+    // Catch error
+    if(err) {
+
+      // Log it
+      log.error('Redis ' + err);
+
+      // Return error callback
+      return callback(new indigoError({ message: err, errorCode: 500 }));
+
+    }
+
+    // Device not exists
+    if(!data) {
+
+      // Return error callback
+      return callback(new indigoError({ message: 'Device not exists', errorCode: 404 }));
+
+    }
+
+    // Device exists
+    // Parse JSON from DB
+    data = JSON.parse(data);
+
+    // Make request
+    superagent.get('http://' + data.ip + '/' + data.password + '::OW:' + pinNumber + ':DISCOVERY').end(function (err, res) {
+
+      // Error detected
+      if(err) {
+
+        // Catch timeout error
+        if(err.timeout) {
+
+          // Return error callback
+          return callback(new indigoError({ message: 'Device unresponsible', errorCode: 503 }));
+
+        }
+
+        else if(err) {
+
+          // Return error callback
+          return callback(new indigoError({ message: err, errorCode: 400 }));
+
+        }
+
+      }
+
+      else {
+
+        // Fix bug in 0.7.3
+        if(res.text[res.text.length - 3] == ",") { res.text[res.text.length - 3] = ""; }
+        
+        // Parse data from Celestia
+        var celestiaData = JSON.parse(res.text);
+
+        // Get code
+        if(celestiaData.code == 200) {
+
+          // Return successfull callback 
+          return callback(undefined, { code: 200, devices: celestiaData.devices });
+
+        }
+
+        // Return error (if error :3)
+        return callback(new indigoError({ message: 'Received error code from device', errorCode: celestiaData.code }));
+
+      }
+
+    });
+
+  });
+
+}
+
 module.exports.gpio = gpio;
 module.exports.dht = dht;
+module.exports.ow = ow;
