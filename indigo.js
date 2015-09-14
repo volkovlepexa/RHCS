@@ -13,6 +13,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var socketio = require('socket.io');
 var express = require('express');
+var utils = require('./system/core/indigoUtils.js');
 var path = require('path');
 var fs = require('fs');
 
@@ -290,21 +291,6 @@ indigo.get('/page/:page', function (req, res) {
   
 });
 
-// API routes
-indigoAPIRouter.route('/users/:username')
-  .get(userAPIModule.userGET)
-  .post(userAPIModule.userPOST)
-  .delete(userAPIModule.userDELETE)
-  .put(userAPIModule.userPUT);
-
-indigoAPIRouter.route('/sessions/:session')
-  .get(userAPIModule.sessionGET)
-  .delete(userAPIModule.sessionDELETE);
-
-indigoAPIRouter.route('/sessions/')
-  .put(userAPIModule.sessionPUT);
-
-
 // Create socket.io listners
 var randall = require('socket.io')(securedServer);
 
@@ -312,7 +298,7 @@ var randall = require('socket.io')(securedServer);
 randall.on('connection', function (socket) {
 
   var log = require('mag')('RandallServer');
-  
+
   // @FUTURE: Authentication for sockets
   // ANCHOR RHCS.SOCKETIO.HANDLERS
   log.debug('New socket client from ' + socket.handshake.address);
@@ -330,76 +316,76 @@ randall.on('connection', function (socket) {
       return;
 
     }
-    
+
     // Incorrect data given
     if(data.session.length != 32 || !(/^[0-9A-Fa-f]+$/).test(data.session)) {
-    
+
       // Log it
       log.error('Incorrect data defined from ' + data.address);
 
       // Exit
       return;
-    
+
     }
 
     // Attempt to authenticate session
     userProvider.getSessionInformation(data.session, function (err) {
-    
+
       // Catch error
       if(err) {
-      
+
         // Log error
         log.warn(err + ' from ' + socket.handshake.address);
-        
+
         // Exit
         return;
-      
+
       }
-      
+
       // Task One: GET value
       if(data.taskName == 'GTV') {
-        
+
         // Get thing info
         redisClient.get('rhcs:celestia_thing:' + data.thingID, function (err, thingData) {
-        
+
           // Catch redis error
           if(err) {
-          
+
             // Log
             log.error('Redis ' + err);
-            
+
             // Exit
             return;
-          
+
           }
-          
+
           // Thing not existing
           if(!thingData) {
-          
+
             // Log
             log.warn('Requested thing not exist from ' + socket.handshake.address);
-            
+
             // Exit
             return;
-          
+
           }
-          
+
           // Parse
           thingData = JSON.parse(thingData);
-          
+
           // Return value
           socket.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: thingData.value });
 
           // Exit
           return;
-        
+
         });
-      
+
       }
-      
+
       // Task Two: SET value
       else if(data.taskName == 'PTV') {
-      
+
         // Get thing info
         redisClient.get('rhcs:celestia_thing:' + data.thingID, function (err, thingData) {
 
@@ -427,29 +413,29 @@ randall.on('connection', function (socket) {
 
           // Parse
           thingData = JSON.parse(thingData);
-          
+
           // Call the force
           if(thingData.type == 'do') {
-          
+
             celestiaProvider.gpio.dwrite(thingData.parent, thingData.pin, data.value, function (err) {
-            
+
               // Catch error
               if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); }
-              
+
               // Publish new value
               socket.broadcast.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: data.value });
-              
+
               // Update socket value
               thingData.value = data.value;
               redisClient.set('rhcs:celestia_thing:' + data.thingID, JSON.stringify(thingData));
-              
+
               // Exit
               return;
-            
+
             });
-          
+
           }
-          
+
           else if(thingData.type == 'ao') {
 
             celestiaProvider.gpio.awrite(thingData.parent, thingData.pin, data.value, function (err) {
@@ -463,20 +449,111 @@ randall.on('connection', function (socket) {
               // Update socket value
               thingData.value = data.value;
               redisClient.set('rhcs:celestia_thing:' + data.thingID, JSON.stringify(thingData));
-              
+
               // Exit
               return;
 
             });
-          
+
           }
 
         });
-      
+
       }
-      
+
     });
 
   });
 
+});
+
+// API routes
+indigoAPIRouter.route('/users/:username')
+  .get(userAPIModule.userGET)
+  .post(userAPIModule.userPOST)
+  .delete(userAPIModule.userDELETE)
+  .put(userAPIModule.userPUT);
+
+indigoAPIRouter.route('/sessions/:session')
+  .get(userAPIModule.sessionGET)
+  .delete(userAPIModule.sessionDELETE);
+
+indigoAPIRouter.route('/sessions/')
+  .put(userAPIModule.sessionPUT);
+
+indigoAPIRouter.route('/celestia/xbee').post(function (req, res) {
+console.log(req.body);  
+  // Check important data
+  if(typeof(req.body.deviceName) == 'undefined' || typeof(req.body.apikey) == 'undefined' || typeof(req.body.xbeePayload) == 'undefined') {
+
+    // Log this
+    log.warn('Important data for Celestia.rxXbee undefined from ' + req.connection.remoteAddress);
+
+    // Return error callback
+    res.status(400);
+    res.json({ code: 400, description: 'Important parameter undefined' });
+    
+    // Exit
+    return;
+
+  }
+  
+  //@FIXME: На проверки всякие времени нет - надо успевать. Потом пофиксим
+
+  // Get device info
+  redisClient.get('rhcs:devices:' + req.body.deviceName, function (err, data) {
+  
+    // Catch Redis error
+    if(err) {
+    
+      // Log
+      log.error('Redis ' + err);
+      
+      // Return error
+      res.status(500);
+      res.json({ code: 500, description: 'ISE' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Parse data
+    data = JSON.parse(data);
+    
+    // Check key
+    if(req.body.apikey !== data.apikey) {
+    
+      // Log
+      log.warn('Invalid API key for Celestia.rxXbee from ' + req.connection.remoteAddress);
+      
+      // Return error
+      res.status(403);
+      res.json({ code: 403, description: 'Invalid API key' });
+      
+      // Exit
+      return;
+    
+    }
+    
+    // Return OK
+    res.json({ code: 200 });
+    
+    // Add your handlers here
+    var payloadType = req.body.xbeePayload.substring(0, req.body.xbeePayload.indexOf(':'));
+    
+    if(payloadType == 'TEMP') {
+    
+      // Get temperature
+      var temperature = req.body.xbeePayload.substring(req.body.xbeePayload.indexOf(':') + 1);
+      
+      // Convert
+      temperature = (((temperature / 100) - 273.15)).toFixed(2);
+      
+      console.log(temperature);
+    
+    }
+  
+  });
+  
 });
