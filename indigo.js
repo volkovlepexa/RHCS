@@ -11,6 +11,7 @@
 // Modules
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
+var serialPort = require('serialport').SerialPort;
 var socketio = require('socket.io');
 var express = require('express');
 var utils = require('./system/core/indigoUtils.js');
@@ -481,79 +482,4 @@ indigoAPIRouter.route('/sessions/:session')
 indigoAPIRouter.route('/sessions/')
   .put(userAPIModule.sessionPUT);
 
-indigoAPIRouter.route('/celestia/xbee').post(function (req, res) {
-console.log(req.body);  
-  // Check important data
-  if(typeof(req.body.deviceName) == 'undefined' || typeof(req.body.apikey) == 'undefined' || typeof(req.body.xbeePayload) == 'undefined') {
-
-    // Log this
-    log.warn('Important data for Celestia.rxXbee undefined from ' + req.connection.remoteAddress);
-
-    // Return error callback
-    res.status(400);
-    res.json({ code: 400, description: 'Important parameter undefined' });
-    
-    // Exit
-    return;
-
-  }
-  
-  //@FIXME: На проверки всякие времени нет - надо успевать. Потом пофиксим
-
-  // Get device info
-  redisClient.get('rhcs:devices:' + req.body.deviceName, function (err, data) {
-  
-    // Catch Redis error
-    if(err) {
-    
-      // Log
-      log.error('Redis ' + err);
-      
-      // Return error
-      res.status(500);
-      res.json({ code: 500, description: 'ISE' });
-      
-      // Exit
-      return;
-    
-    }
-    
-    // Parse data
-    data = JSON.parse(data);
-    
-    // Check key
-    if(req.body.apikey !== data.apikey) {
-    
-      // Log
-      log.warn('Invalid API key for Celestia.rxXbee from ' + req.connection.remoteAddress);
-      
-      // Return error
-      res.status(403);
-      res.json({ code: 403, description: 'Invalid API key' });
-      
-      // Exit
-      return;
-    
-    }
-    
-    // Return OK
-    res.json({ code: 200 });
-    
-    // Add your handlers here
-    var payloadType = req.body.xbeePayload.substring(0, req.body.xbeePayload.indexOf(':'));
-    
-    if(payloadType == 'TEMP') {
-    
-      // Get temperature
-      var temperature = req.body.xbeePayload.substring(req.body.xbeePayload.indexOf(':') + 1);
-      
-      // Convert
-      temperature = (((temperature / 100) - 273.15)).toFixed(2);
-      
-      console.log(temperature);
-    
-    }
-  
-  });
-  
-});
+// @FUTURE: Add normal xbee push api action
