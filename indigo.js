@@ -11,7 +11,6 @@
 // Modules
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
-var serialPort = require('serialport').SerialPort;
 var socketio = require('socket.io');
 var express = require('express');
 var utils = require('./system/core/indigoUtils.js');
@@ -483,3 +482,4 @@ indigoAPIRouter.route('/sessions/')
   .put(userAPIModule.sessionPUT);
 
 // @FUTURE: Add normal xbee push api action
+setInterval(function () { randall.emit('notification', { message: 'message', title: 'title', type: 'warning' }); }, 3000);
