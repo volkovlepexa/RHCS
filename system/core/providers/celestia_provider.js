@@ -30,7 +30,9 @@
       IDENTIFY
       FLUSH
       
-  AltStruct::CelestiaGET
+  AltStruct::Celestia:Robofinist
+    ROTATESERVO
+    CONTROLSTRIPE
   
     
 
@@ -683,7 +685,7 @@ ow.convertAddress = function (address) {
  * @returns {Function} Callback
  */
 
-ow.readDS18B20 = function(deviceName, pinNumber, deviceAddress, callback) {
+ow.readDS18B20 = function (deviceName, pinNumber, deviceAddress, callback) {
 
   // Check input values
   if(deviceName.length < 3 || !(/^[\w.@]+$/).test(deviceName)) {
@@ -798,7 +800,7 @@ var servo = {};
  * @returns {Function} Callback
  */
 
-servo.rotateServo = function(deviceName, servoID, servoAngle, callback) {
+servo.rotateServo = function (deviceName, servoID, servoAngle, callback) {
 
   // Check input values
   if(deviceName.length < 3 || !(/^[\w.@]+$/).test(deviceName)) {
@@ -897,7 +899,109 @@ servo.rotateServo = function(deviceName, servoID, servoAngle, callback) {
 
 };
 
+var ledStripe = {};
+
+ledStripe.setColor = function (deviceName, segment, rgb, callback) {
+
+  // Check input values
+  if(deviceName.length < 3 || !(/^[\w.@]+$/).test(deviceName)) {
+
+    // Return error callback
+    return callback(new indigoError({ message: 'Incorrect device name', errorCode: 400 }));
+
+  }
+
+  // Check port and value
+  if(typeof(segment) != 'number') {
+
+    // Return error callback
+    return callback(new indigoError({ message: 'Incorrect segment', errorCode: 400 }));
+
+  }
+
+  // Check sensor type
+  if(typeof(rgb) != 'object') {
+
+    // Return error callback
+    return callback(new indigoError({ message: 'Invalid servo angle', errorCode: 400 }));
+
+  }
+
+  // Get device data from DB
+  redisClient.get('rhcs:devices:' + deviceName, function (err, data) {
+
+    // Catch error
+    if(err) {
+
+      // Log it
+      log.error('Redis ' + err);
+
+      // Return error callback
+      return callback(new indigoError({ message: err, errorCode: 500 }));
+
+    }
+
+    // Device not exists
+    if(!data) {
+
+      // Return error callback
+      return callback(new indigoError({ message: 'Device not exists', errorCode: 404 }));
+
+    }
+
+    // Device exists
+    // Parse JSON from DB
+    data = JSON.parse(data);
+
+    // Make request
+    superagent.get('http://' + data.ip + '/' + data.password + '::CONTROLSTRIPE:' + segment + ':' + rgb.red + ':' + rgb.green + ':' + rgb.blue).end(function (err, res) {
+
+      // Error detected
+      if(err) {
+
+        // Catch timeout error
+        if(err.timeout) {
+
+          // Return error callback
+          return callback(new indigoError({ message: 'Device unresponsible', errorCode: 503 }));
+
+        }
+
+        else if(err) {
+
+          // Return error callback
+          return callback(new indigoError({ message: err, errorCode: 400 }));
+
+        }
+
+      }
+
+      else {
+
+        // Parse data from Celestia
+        var celestiaData = JSON.parse(res.text);
+
+        // Get code
+        if(celestiaData.code == 200) {
+
+          // Return successfull callback 
+          return callback(undefined, { code: 200 });
+
+        }
+
+        // Return error (if error :3)
+        return callback(new indigoError({ message: 'Received error code from device', errorCode: celestiaData.code }));
+
+      }
+
+    });
+
+  });
+
+};
+
 module.exports.gpio = gpio;
 module.exports.dht = dht;
 module.exports.ow = ow;
 module.exports.servo = servo;
+module.exports.ledStripe = ledStripe;

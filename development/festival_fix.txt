@@ -1,0 +1,6 @@
+1. Autoload RU lang
+Change default voice in near of end file /usr/share/festival/init.scm
+Change (eval (list defaults_voices)) to (eval (list voice_msu_ru_nsh_clunits))
+
+2. Add access
+Add "*" argument in server_access_list in /usr/share/festival/festival.scm

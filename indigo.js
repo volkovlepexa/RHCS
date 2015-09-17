@@ -15,6 +15,7 @@ var socketio = require('socket.io');
 var express = require('express');
 var utils = require('./system/core/indigoUtils.js');
 var path = require('path');
+var xbee = require('./system/core/providers/xbee_provider.js');
 var fs = require('fs');
 
 // Attach logger
@@ -30,6 +31,9 @@ var configuration = require('./system/core/configuration.js');
 
 // Attach Redis from factory
 redisClient = require('./system/core/redisFactory.js');
+
+// Attaching xBee
+var xBee = xbee.xbee('/dev/ttyUSB0');
 
 // Load providers
 var userProvider = require('./system/core/providers/user_provider.js');
@@ -437,7 +441,7 @@ randall.on('connection', function (socket) {
           }
 
           else if(thingData.type == 'ao') {
-
+console.log('falls');
             celestiaProvider.gpio.awrite(thingData.parent, thingData.pin, data.value, function (err) {
 
               // Catch error
@@ -481,5 +485,8 @@ indigoAPIRouter.route('/sessions/:session')
 indigoAPIRouter.route('/sessions/')
   .put(userAPIModule.sessionPUT);
 
+indigoAPIRouter.route('/push_xbee')
+  .get(function (req, res) {  );
+
 // @FUTURE: Add normal xbee push api action
-setInterval(function () { randall.emit('notification', { message: 'message', title: 'title', type: 'warning' }); }, 3000);
+//setInterval(function () { randall.emit('notification', { message: 'message', title: 'title', type: 'warning' }); }, 3000);

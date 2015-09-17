@@ -1,11 +1,12 @@
 var redis = require('../system/core/redisFactory');
-redis.set('rhcs:celestia_thing:0', '{"parent": "celone", "description": "Кабинет", "type": "do", "pin": 22, "value": 0}');
-redis.set('rhcs:celestia_thing:1', '{"parent": "celone", "description": "Чайник", "type": "do", "pin": 23, "value": 0}');
-redis.set('rhcs:celestia_thing:2', '{"parent": "celone", "description": "Большая аудитория", "type": "do", "pin": 24, "value": 0}');
-redis.set('rhcs:celestia_thing:3', '{"parent": "celone", "description": "Склад", "type": "do", "pin": 25, "value": 0}');
-redis.set('rhcs:celestia_thing:4', '{"parent": "celone", "description": "Подсветка #1", "type": "ao", "pin": 13, "value": 0}');
-redis.set('rhcs:celestia_thing:5', '{"parent": "celone", "description": "Подсветка #2", "type": "ao", "pin": 3, "value": 0}');
-redis.set('rhcs:celestia_thing:6', '{"parent": "celone", "description": "Robot One", "type": "xbs_robot", "rID": "00A1" }');
-redis.set('rhcs:celestia_thing:8', '{"parent": "celone", "description": "Robot Two", "type": "xbs_robot", "rID": "00A2 }');
-redis.set('rhcs:celestia_thing:9', '{"parent": "celone", "description": "HVAC", "type": "r433_irsend_hvac", "rID": "005A }');
-redis.set('rhcs:celestia_thing:10', '{"parent": "celone", "description": "Розетка", "type": "do", "pin": 27, "value": 0}');
+
+redis.set('rhcs:users:demousr',"{\"username\":\"demousr\",\"password\":\"1b0b73a2842fcfcf64791d15f72a51e38459f4162b6e00f644bc75535b7f3b8b\",\"email\":\"defman@notadefman.cc\",\"birthday\":\"15.04.1995\",\"fullname\":\"WhoIsDefman\",\"salt\":\"4eaf4126fdb0efcf64b647edb747fb14\"}");
+
+redis.set('rhcs:devices:celone', "{\"ip\": \"192.168.1.35\", \"password\":\"leporskyinthesky\", \"proto\": \"celestia\", \"apikey\": \"e62b804a71da26f8d7bdcee4a6309a2b\"}")
+
+redis.set('rhcs:celestia_thing:0', '{"parent": "celone", "description": "Бра #1", "type": "ao", "pin": 2, "value": 0}');
+redis.set('rhcs:celestia_thing:1', '{"parent": "celone", "description": "Бра #2", "type": "ao", "pin": 3, "value": 0}');
+redis.set('rhcs:celestia_thing:2', '{"parent": "celone", "description": "Сегмент #1", "type": "neopixel_sg", "pin": 22, "segment": 1, "value": "#000000"}');
+redis.set('rhcs:celestia_thing:3', '{"parent": "celone", "description": "Сегмент #2", "type": "neopixel_sg", "pin": 22, "segment": 2, "value": "#000000"}');
+redis.set('rhcs:celestia_thing:4', '{"parent": "celone", "description": "Розетка", "type": "xbee_doxor", "sID": "09A38D", "pin": 4, "value": 0 }');
+redis.set('rhcs:celestia_thing:5', '{"parent": "celone", "description": "Вентилятор", "type": "xbee_doxor", "sID": "09A38D", "pin": 5, "value": 0 }');

@@ -8,4 +8,4 @@ xBee.on('packet', function (packet) {
 
 });
 
-setInterval(function () { xBee.emit('push_packet', 'F3FFFF:GETTEMP:'); }, 1500);
+setInterval(function () { xBee.emit('push_packet', 'F3FFFF:HBEAT:'); }, 1500);

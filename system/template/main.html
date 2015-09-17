@@ -61,13 +61,13 @@
               </div>
 
               <div class="valign-wrapper">
-                <i class="small mdi-maps-traffic"></i>
-                <b class="valign" id="dashboard-widget-traffic">&nbsp;&nbsp;3 балла</b>
+                <i class="small mdi-file-cloud"></i>
+                <b class="valign" id="dashboard-widget-weather">&nbsp; Дом: &nbsp; 26&deg; / 34%</b>
               </div>
-
+             
               <div class="valign-wrapper">
                 <i class="small mdi-file-cloud"></i>
-                <b class="valign" id="dashboard-widget-weather">&nbsp; 18&deg; Ясно</b>
+                <b class="valign" id="dashboard-widget-weather">&nbsp; Улица: &nbsp; 0.9&deg; / 74% / Ясно / 10 Ms</b>
               </div>
 
               <div class="valign-wrapper">
@@ -100,45 +100,17 @@
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
 
-              <span class="card-title">Освещение</span>
+              <span class="card-title">Освещение</span><br><br>
 
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="2" data-thinggroup="lighting">
-                  <span class="lever"></span>
-                  &nbsp; <b>Основная аудитория</b>
-                </label>
-              </div><br>
+              <p class="range-field">
+                <b>Бра #1</b><br>
+                <input type="range" onchange="pushNewValue(this)" data-thingid="0" min="0" max="255" />
+              </p><br>
               
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="3" data-thinggroup="lighting">
-                  <span class="lever"></span>
-                  &nbsp; <b>Склад</b>
-                </label>
-              </div><br>
-
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="0" data-thinggroup="lighting">
-                  <span class="lever"></span>
-                  &nbsp; <b>Кабинет</b>
-                </label>
-              </div><br><br>
-                                          
-              <div>
-                <label>
-                  <b>Подсветка #1</b>
-                  <p class="range-field"><input type="range" onchange="pushNewValue(this)" data-thingid="4" data-thinggroup="lighting" min="0" max="255" /></p>
-                </label>
-              </div><br>
-              
-              <div>
-                <label>
-                  <b>Подсветка #2</b>
-                  <p class="range-field"><input type="range" onchange="pushNewValue(this)" data-thingid="5" data-thinggroup="lighting" min="0" max="255" /></p>
-                </label>
-              </div>
+              <p class="range-field">
+                <b>Бра #2</b><br>
+                <input type="range" onchange="pushNewValue(this)" data-thingid="1" min="0" max="255" />
+              </p>
               
             </div>
             <div class="card-action">
@@ -148,12 +120,7 @@
           </div>
         </div>
         
-      </div>
-      
-      <!-- Second row -->
-      <div class="row">
-        
-        <!-- Plant -->
+        <!-- Plant 
         <div class="col s12 m6">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
@@ -167,42 +134,25 @@
             </div>
           </div>
         </div>
+        -->
 
-        <!-- Electricity -->
         <div class="col s12 m6">
+
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
-
-              <!-- Card header -->
-              <span class="card-title">Электроэнергия</span><br>
-
-              <!-- Chaynik -->
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="1" data-thinggroup="electricity">
-                  <span class="lever"></span>
-                  &nbsp; <b>Чайник</b>
-                </label>
-              </div><br>
+              <span class="card-title">Светодиодная лента</span><br>
               
-              <!-- The Rozetka -->
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="10" data-thinggroup="electricity">
-                  <span class="lever"></span>
-                  &nbsp; <b>Розетка</b>
-                </label>
-              </div>
-
-            </div>
-            <div class="card-action">
-              
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="electricity">ON</button>
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="electricity">OFF</button>
-              
+              <h6>Сегмент №1</h6>
+              <input type="color" data-thingid="2" onchange="pushNewValue(this)" data-thinggroup="lighting">
+              <br><br>
+              <h6>Сегмент №2</h6>
+              <input type="color" data-thingid="3" onchange="pushNewValue(this)" data-thinggroup="lighting">
+              <br><br>
             </div>
           </div>
+
         </div>
+       
       </div>
       
       <!-- Third row -->
@@ -215,6 +165,42 @@
               <span class="card-title">Camera One</span><br>
               <img id="cameraStream" alt="Camera stream" class="responsive-img">
               <!--<img src="https://placehold.it/640x560" alt="Camera stream" class="responsive-img">-->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Electricity -->
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+
+              <!-- Card header -->
+              <span class="card-title">Электроэнергия</span><br>
+
+              <!-- Rozetka -->
+              <div class="switch">
+                <label>
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="4" data-thinggroup="electricity">
+                  <span class="lever"></span>
+                  &nbsp; <b>Розетка</b>
+                </label>
+              </div><br>
+
+              <!-- Ventilation -->
+              <div class="switch">
+                <label>
+                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="5" data-thinggroup="electricity">
+                  <span class="lever"></span>
+                  &nbsp; <b>Вентилятор</b>
+                </label>
+              </div>
+
+            </div>
+            <div class="card-action">
+
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="electricity">ON</button>
+              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="electricity">OFF</button>
+
             </div>
           </div>
         </div>
@@ -251,19 +237,40 @@
         </div>
         -->
         
-        <!--
+        
         
         <div class="col s12 m6">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
-              <span class="card-title">The Robotic Vaccum Cleaner 5000&trade;</span><br>
-              <button class="btn">Begin</button>
-              <button class="btn">Base</button>
+              <span class="card-title">Проточная вентиляция</span><br>
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_on">Включить</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_off">Выключить</button>
             </div>
           </div>
         </div>
         
-        -->
+      </div>
+      <div class="row">
+        
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Штора</span><br>
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_up">Поднять</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_down">Опустить</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Дверь</span><br>
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_open">Открыть</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_close">Закрыть</button>
+            </div>
+          </div>
+        </div>
         
       </div>
       

@@ -8,18 +8,6 @@
 
 */
 
-/*
-
-
-  Struct: xBee_Provider
-  
-    Worker::EventEmitter
-    
-    sendXbeeCommand
-
-
-*/
-
 // Load modules
 var EventEmitter = require('events').EventEmitter;
 var serialPortModule = require('serialport').SerialPort;

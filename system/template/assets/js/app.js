@@ -147,8 +147,8 @@ if(window.rhcs.pageMarker == 'main') {
       // Checkbox
       if(window.rhcs.thingsList[data.thingID].getAttribute('type') == 'checkbox') { window.rhcs.thingsList[data.thingID].checked = data.value; }
       
-      // Range
-      else { window.rhcs.thingsList[data.thingID].value = data.value; }
+      // Range and color
+      else if(window.rhcs.thingsList[data.thingID].getAttribute('type') == 'range' || window.rhcs.thingsList[data.thingID].getAttribute('type') == 'color') { window.rhcs.thingsList[data.thingID].value = data.value; }
     
     }
     
@@ -211,7 +211,7 @@ if(window.rhcs.pageMarker == 'main') {
 
 
   // Enumerate things
-  $('input[type=checkbox],input[type=range]').each(function (num, element) {
+  $('input[type=checkbox],input[type=range],input[type=color]').each(function (num, element) {
 
     // Get element id
     var elementThingID = element.dataset.thingid;
