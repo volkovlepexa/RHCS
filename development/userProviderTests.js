@@ -34,7 +34,7 @@ function myLovelyDebugger(err, data) {
 //userProvider.createUser('demousr', 'demopassword', 'Peter', 'peter@example.com', '03.02.1970', function (err, data) { myLovelyDebugger(err,data); });
 
 // User.editUser - edit user
-userProvider.editUser('demousr', { password: 'deathcubforcutie' }, function (err, data) { myLovelyDebugger(err, data); });
+//userProvider.editUser('demousr', { password: 'deathcubforcutie' }, function (err, data) { myLovelyDebugger(err, data); });
 
 // User.deleteUser - delete user
 //userProvider.deleteUser('demousr', function (err, data) { myLovelyDebugger(err, data); });

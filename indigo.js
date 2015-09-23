@@ -441,11 +441,11 @@ randall.on('connection', function (socket) {
           }
 
           else if(thingData.type == 'ao') {
-console.log('falls');
-            celestiaProvider.gpio.awrite(thingData.parent, thingData.pin, data.value, function (err) {
+
+            celestiaProvider.gpio.awrite(thingData.parent, thingData.segment, data.value, function (err) {
 
               // Catch error
-              if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); throw err; }
+              if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); return err; }
 
               // Publish new value
               socket.broadcast.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: data.value });
@@ -459,6 +459,25 @@ console.log('falls');
 
             });
 
+          }
+          
+          // Robofinist: NeoPixel
+          else if(thingData.type == 'neopixel_sg') {
+          
+            var hexrgb = require('./development/hexrgb.js');
+            var rgb = hexrgb.toRGB(data.value.substring(1));
+            console.log(data);
+            console.log(rgb);
+            celestiaProvider.ledStripe.setColor('celone', 1, { red: rgb[0], green: rgb[1], blue: rgb[2] }, function (err, data) {
+            
+              if(err) { log.warn('SOCKET ' + err + ' from ' + socket.handshake.address); return; }
+              
+              console.log(data);
+              
+              socket.broadcast.emit('mosi', { payloadType: 'thingState', thingID: data.thingID, value: data.value });
+            
+            });
+          
           }
 
         });
@@ -486,7 +505,125 @@ indigoAPIRouter.route('/sessions/')
   .put(userAPIModule.sessionPUT);
 
 indigoAPIRouter.route('/push_xbee')
-  .get(function (req, res) {  );
+  .get(function (req, res) {
+
+    // @FIX: Robofinist. Code needed to be rewritten
+    xBee.emit('push_packet', req.payload);
+    res.json({ code: 200 });
+
+});
+
+indigoAPIRouter.route('/execute_task')
+  .get(function (req, res) {
+
+    // @FIX: Robofinist. Code needed to be rewritten
+    var task = req.query.task;
+  
+    res.json({code: 200});
+  
+    // Ventillation ON
+    if(task == 'VENT_ON') {
+    
+      celestiaProvider.gpio.dwrite('celone', 31, 0, function (err, data) { if(err) { log.error(err.message); } })
+      celestiaProvider.gpio.dwrite('celone', 30, 1, function (err, data) { if(err) { log.error(err.message); } })
+    
+    }
+  
+    // Ventillation OFF
+    else if(task == 'VENT_OFF') {
+    
+      celestiaProvider.gpio.dwrite('celone', 30, 0, function (err, data) { if(err) { log.error(err.message); } })
+    
+    }
+  
+    // Blinde
+    else if(task == 'BLINDE_UP') {
+    
+      celestiaProvider.gpio.dwrite('celone', 34, 1, function (err, data) { if(err) { log.error(err.message); } })
+      
+      celestiaProvider.gpio.dwrite('celone', 33, 0, function (err, data) {
+      
+        if(err) { log.error(err); return; }
+        
+        // Wait few moments, and stop engine
+        setTimeout(function () {
+        
+          celestiaProvider.gpio.awrite('celone', 34, 0, function (err, data) {
+          
+            if(err) { log.error(err); return; }
+          
+          });
+        
+        }, 5500);
+      
+      });
+    
+    }
+  
+    else if(task == 'BLINDE_DOWN') {
+
+    celestiaProvider.gpio.dwrite('celone', 34, 0, function (err, data) { if(err) { log.error(err.message); } })
+
+    celestiaProvider.gpio.dwrite('celone', 33, 1, function (err, data) {
+
+      if(err) { log.error(err); return; }
+
+      // Wait few moments, and stop engine
+      setTimeout(function () {
+
+        celestiaProvider.gpio.dwrite('celone', 33, 0, function (err, data) {
+
+          if(err) { log.error(err); return; }
+
+        });
+
+      }, 3800);
+
+    });
+
+  }
+  
+  
+    // Door
+    else if(task == 'DOOR_OPEN') {
+    
+      celestiaProvider.servo.rotateServo('celone', 1, 0, function (err, data) { if(err) { log.error(err.message); } });
+    
+    }
+  
+    else if(task == 'DOOR_CLOSE') {
+    
+      celestiaProvider.servo.rotateServo('celone', 1, 150, function (err, data) { if(err) { log.error(err.message); } });
+    
+    }
+  
+    // Lamp
+    else if(task == 'LAMP_ON') {
+    
+      xBee.emit('push_packet', 'F3FFFF:DWRITEXOR:4:1');
+    
+    }
+  
+    else if(task == 'LAMP_OFF') {
+    
+      xBee.emit('push_packet', 'F3FFFF:DWRITEXOR:4:0');
+    
+    }
+  
+    // BVENT
+    else if(task == 'BVENT_ON') {
+    
+      xBee.emit('push_packet', 'F3FFFF:DWRITEXOR:5:1');
+    
+    }
+  
+    else if(task == 'BVENT_OFF') {
+    
+      xBee.emit('push_packet', 'F3FFFF:DWRITEXOR:5:0');
+    
+    }
+
+  });
 
 // @FUTURE: Add normal xbee push api action
 //setInterval(function () { randall.emit('notification', { message: 'message', title: 'title', type: 'warning' }); }, 3000);

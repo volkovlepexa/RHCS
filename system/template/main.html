@@ -52,7 +52,7 @@
 
             <div class="card-content white-text">
 
-              <b>Novosibirsk &bull; NOVT UTC+6</b>
+              <b>Saint-Petersburg &bull; UTC + 3</b>
               <h3 id="dashboard-widget-time">15:15</h3>
 
               <div class="valign-wrapper">
@@ -62,17 +62,17 @@
 
               <div class="valign-wrapper">
                 <i class="small mdi-file-cloud"></i>
-                <b class="valign" id="dashboard-widget-weather">&nbsp; Дом: &nbsp; 26&deg; / 34%</b>
+                <b class="valign" id="dashboard-widget-weather">&nbsp; Дом: &nbsp; 31&deg; / 32%</b>
               </div>
              
               <div class="valign-wrapper">
                 <i class="small mdi-file-cloud"></i>
-                <b class="valign" id="dashboard-widget-weather">&nbsp; Улица: &nbsp; 0.9&deg; / 74% / Ясно / 10 Ms</b>
+                <b class="valign" id="dashboard-widget-weather">&nbsp; Улица: &nbsp; 14.0&deg; / 82% / 18 ms</b>
               </div>
 
               <div class="valign-wrapper">
                 <i class="small mdi-editor-attach-money"></i>
-                <b class="valign" id="dashboard-widget-currate">&nbsp;&nbsp; USD: 68.72 &nbsp;&bull;&nbsp; EUR 76.93</b>
+                <b class="valign" id="dashboard-widget-currate">&nbsp;&nbsp; USD: 65.64 &nbsp;&bull;&nbsp; EUR 74.96</b>
               </div>
 
               <div class="valign-wrapper">
@@ -96,29 +96,8 @@
         </div>
        
         <!-- Lighting -->
-        <div class="col s12 m6">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-
-              <span class="card-title">Освещение</span><br><br>
-
-              <p class="range-field">
-                <b>Бра #1</b><br>
-                <input type="range" onchange="pushNewValue(this)" data-thingid="0" min="0" max="255" />
-              </p><br>
-              
-              <p class="range-field">
-                <b>Бра #2</b><br>
-                <input type="range" onchange="pushNewValue(this)" data-thingid="1" min="0" max="255" />
-              </p>
-              
-            </div>
-            <div class="card-action">
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="lighting">ON</button>
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="lighting">OFF</button>
-            </div>
-          </div>
-        </div>
+        
+        
         
         <!-- Plant 
         <div class="col s12 m6">
@@ -143,14 +122,34 @@
               <span class="card-title">Светодиодная лента</span><br>
               
               <h6>Сегмент №1</h6>
-              <input type="color" data-thingid="2" onchange="pushNewValue(this)" data-thinggroup="lighting">
+              <input type="color" data-thingid="2" onchange="pushNewValue(this)" data-segment="1" data-thinggroup="lighting">
               <br><br>
               <h6>Сегмент №2</h6>
-              <input type="color" data-thingid="3" onchange="pushNewValue(this)" data-thinggroup="lighting">
+              <input type="color" data-thingid="3" onchange="pushNewValue(this)" data-segment="2" data-thinggroup="lighting">
               <br><br>
             </div>
           </div>
 
+        </div>
+        
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Проточная вентиляция</span><br>
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_on"  onclick="$.get('/api/v1/execute_task', { task: 'VENT_ON' })">Включить</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_off"  onclick="$.get('/api/v1/execute_task', { task: 'VENT_OFF' })">Выключить</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Розетка</span><br>
+              <button class="waves-effect waves-teal btn btn-small" onchange="" data-thingaction="blinds_up" onclick="$.get('/api/v1/execute_task', { task: 'LAMP_ON' })">Включить</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_down" onclick="$.get('/api/v1/execute_task', { task: 'LAMP_OFF' })">Выключить</button>
+            </div>
+          </div>
         </div>
        
       </div>
@@ -169,41 +168,38 @@
           </div>
         </div>
         
-        <!-- Electricity -->
         <div class="col s12 m6">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
-
-              <!-- Card header -->
-              <span class="card-title">Электроэнергия</span><br>
-
-              <!-- Rozetka -->
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="4" data-thinggroup="electricity">
-                  <span class="lever"></span>
-                  &nbsp; <b>Розетка</b>
-                </label>
-              </div><br>
-
-              <!-- Ventilation -->
-              <div class="switch">
-                <label>
-                  <input type="checkbox" onchange="pushNewValue(this)" data-thingid="5" data-thinggroup="electricity">
-                  <span class="lever"></span>
-                  &nbsp; <b>Вентилятор</b>
-                </label>
-              </div>
-
-            </div>
-            <div class="card-action">
-
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 1)" data-thinggroup="electricity">ON</button>
-              <button class="waves-effect waves-teal btn btn-small" onclick="switchGroupState(this, 0)" data-thinggroup="electricity">OFF</button>
-
+              <span class="card-title">Вентилятор</span><br>
+              <button class="waves-effect waves-teal btn btn-small" onclick="$.get('/api/v1/execute_task', { task: 'BVENT_ON' })">Включить</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" onclick="$.get('/api/v1/execute_task', { task: 'BVENT_OFF' })">Выключить</button>
             </div>
           </div>
         </div>
+        
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Штора</span><br>
+              <button class="waves-effect waves-teal btn btn-small" onclick="$.get('/api/v1/execute_task', { task: 'BLINDE_UP' })" data-thingaction="blinds_up">Поднять</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_down" onclick="$.get('/api/v1/execute_task', { task: 'BLINDE_DOWN' })">Опустить</button>
+            </div>
+          </div>
+        </div>
+
+       <!--
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Дверь</span><br>
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_open">Открыть</button>&nbsp;&nbsp;
+              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_close">Закрыть</button>
+            </div>
+          </div>
+        </div>
+        
+        -->
         
         <!-- HVAC 
         <div class="col s12 m6">
@@ -236,43 +232,6 @@
           </div>
         </div>
         -->
-        
-        
-        
-        <div class="col s12 m6">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Проточная вентиляция</span><br>
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_on">Включить</button>&nbsp;&nbsp;
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="vent_off">Выключить</button>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-      <div class="row">
-        
-        <div class="col s12 m6">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Штора</span><br>
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_up">Поднять</button>&nbsp;&nbsp;
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="blinds_down">Опустить</button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col s12 m6">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Дверь</span><br>
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_open">Открыть</button>&nbsp;&nbsp;
-              <button class="waves-effect waves-teal btn btn-small" data-thingaction="door_close">Закрыть</button>
-            </div>
-          </div>
-        </div>
-        
-      </div>
       
     </div>  
 

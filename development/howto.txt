@@ -1,0 +1,20 @@
+Малюсенькая инструкция о том, как развернуть систему.
+
+1. Сначала, надо установить некоторые пакеты. В apt-based системах (Debian, Ubuntu) это делается так:
+  apt-get install festival festvox-ru npm nodejs redis-server
+  
+2. Далее, клонируем ветку (в случае с Git) или распаковываем архив в некую папку.
+
+3. Для корректной работы, нам потребуется создать линк с /usr/bin/nodejs на /usr/bin/node
+  
+   ln -s /usr/bin/nodejs /usr/bin/node
+  
+4. Находясь в директории с файлами, нам нужно установить все необходимые модули 
+   (cписок которых можно узнать в файле package.json).
+   
+   npm install
+   
+5. Далее, конфигурируем Redis. 
+   Пример конфигурационного файла: https://gist.github.com/CatWhoCode/4e387c1989dcfc318bdc
+   
+6. Правим файл system/core/configuration.js по-вкусу

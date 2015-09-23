@@ -101,15 +101,17 @@ if(window.rhcs.pageMarker == 'main') {
     // Final result value
     var parsedDate = '';
 
+    var dateHours = date.getUTCHours() + 3;
+    
     // Each parameter (hour, min, sec) should have leading zero
-    if(date.getHours() < 10) { parsedDate += '0'; }
-    parsedDate += date.getHours() + ':';
+    if(dateHours < 10) { parsedDate += '0'; }
+    parsedDate += dateHours + ':';
 
-    if(date.getMinutes() < 10) { parsedDate += '0'; }
-    parsedDate += date.getMinutes() + ':';
+    if(date.getUTCMinutes() < 10) { parsedDate += '0'; }
+    parsedDate += date.getUTCMinutes() + ':';
 
-    if(date.getSeconds() < 10) { parsedDate += '0'; }
-    parsedDate += date.getSeconds();
+    if(date.getUTCSeconds() < 10) { parsedDate += '0'; }
+    parsedDate += date.getUTCSeconds();
 
     // Append new DOM value
     document.getElementById(domElementName).innerHTML = parsedDate;
@@ -198,12 +200,20 @@ if(window.rhcs.pageMarker == 'main') {
   function pushNewValue(element) {
 
     var thingID = element.dataset.thingid;
-
+console.log(element.value);
     // For checkbox
     if(element.getAttribute('type') == 'checkbox') { socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.checked + 0 }); }
 
     // For range
     else if(element.getAttribute('type') == 'range') { socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.value }); }
+    
+    // For color
+    else if(element.getAttribute('type') == 'color') { 
+    
+      if(element.dataset.thingid == 2) { fsegment = 1; } else { fsegment = 2; }
+      socket.emit('miso', { taskName: 'PTV', session: getCookie('rhcsSession'), thingID: thingID, value: element.value, segment: fsegment }) 
+    
+    }
     
     console.log('thingPush: ' + element.checked + ' | ' + element.value);
 

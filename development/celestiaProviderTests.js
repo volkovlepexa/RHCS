@@ -4,7 +4,7 @@ function myLovelyDebugger(err, data) {
 
   if(err) {
 
-    // If we had strange error type (not our custom AuthenticationError)
+    // If we had strange error type (not our custom IndigoError)
     if(typeof(err.name) == 'undefined' || err.name != "IndigoError") { console.trace("Invalid error type");  return; }
 
     // If we have correct error
@@ -32,5 +32,5 @@ function myLovelyDebugger(err, data) {
 
 //celestia.servo.rotateServo('celone', 0, 0, function (err, data) { myLovelyDebugger(err, data); });
 
-celestia.ledStripe.setColor('celone', 1, { red: 16, green: 150, blue: 61 }, function (err, data) { myLovelyDebugger(err, data); });
-celestia.ledStripe.setColor('celone', 2, { red: 210, green: 30, blue: 150 }, function (err, data) { myLovelyDebugger(err, data); });
+//celestia.ledStripe.setColor('celone', 1, { red: 16, green: 150, blue: 61 }, function (err, data) { myLovelyDebugger(err, data); });
+//celestia.ledStripe.setColor('celone', 2, { red: 210, green: 30, blue: 150 }, function (err, data) { myLovelyDebugger(err, data); });
