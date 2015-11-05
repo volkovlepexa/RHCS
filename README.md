@@ -3,7 +3,7 @@ RHCS
 RHCS (Robotic Home Controlling System) - open source home automation framework.
 This is unofficial documentation for developers.
 
-### Password Alghoritm
+### Password Alghorithm
 pwdHash(password, salt) =  sha256(sha256(**password** + config.auth.pepper) + **salt**)
 
 ### Regular expressions
@@ -12,6 +12,8 @@ pwdHash(password, salt) =  sha256(sha256(**password** + config.auth.pepper) + **
 **Numbers and letters **: /^[\w]+$/
 
 **In-system username**: /^[\w.@]+$/
+
+**Cyrillic-supported with space**: /^[\wа-яА-Я ]+$/
 
 ### API Status code
 
@@ -26,5 +28,7 @@ pwdHash(password, salt) =  sha256(sha256(**password** + config.auth.pepper) + **
 **403** - Forbidden
 
 **404** - Not Found
+
+**409** - Conflict (as example: something already exists)
 
 **500** - Internal Server Error
