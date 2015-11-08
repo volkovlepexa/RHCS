@@ -82,6 +82,34 @@ configuration = {
 
     }
 
+  },
+
+  // Web Server
+  webServer: {
+
+    // Path to "assets" folder
+    assetsPath: configuration.applicationFolder + "/system/template/assets"
+
+  },
+
+  // MQTT client data
+  mqttConnection: {
+
+    // Hostname
+    hostname: '127.0.0.1',
+
+    // Port
+    port: 1883,
+
+    // Is authentication required?
+    authRequired: true,
+
+    // Username
+    username: 'indigo',
+
+    // Password
+    password: 'rikkahikka'
+
   }
 
 };

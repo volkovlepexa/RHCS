@@ -8,6 +8,7 @@
 */
 
 // @FUTURE: Вынести проверку входных параметров в отдельную функцию
+// @FUTURE: Добавить поддержку OTP
 
 /* Load module dependencies */
 var configuration = require('../configuration.js');
@@ -153,7 +154,7 @@ User.create = function (username, password, email, name, callback) {
     password = crypto.createHash('sha256').update(password + salt).digest('hex');
 
     // Save new user
-    users.insert({ username: username, password: password, passwordSalt: salt, email: email, fullname: name });
+    users.insert({ username: username, password: password, passwordSalt: salt, email: email, fullname: name, otpEnabled: false, otpSecret: "" });
 
     // Return successful callback
     return callback(undefined, true);
@@ -415,7 +416,8 @@ User.information = function (username, callback) {
       password: user.password,
       passwordSalt: user.passwordSalt,
       email: user.email,
-      fullname: user.fullname
+      fullname: user.fullname,
+      otpEnabled: user.otpEnabled
 
     });
 
@@ -513,6 +515,9 @@ Session.authenticate = function (username, password, callback) {
       username: username
 
     };
+
+    // If OTP enabled for user - mark session as unvalidated
+    session.validated = !user.otpEnabled;
 
     // Insert new session
     sessions.insert(session);
