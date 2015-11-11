@@ -14,10 +14,8 @@ var indigo = serverFactory.indigo;
 // Establish MQTT connection
 var mqttClient = require('./system/core/factories/mqttFactory.js');
 
-mqttClient.subscribe('miso');
+indigo.get('/', function (req, res) {
 
-mqttClient.on('message', function (topic, message, packet) {
-
-  console.log('mqttRX: [' + topic + '] ' + message);
+  res.render('index', { title: 'Hey', message: 'Hello there!'});
 
 });

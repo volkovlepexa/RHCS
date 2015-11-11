@@ -139,6 +139,10 @@ indigo.use(function(req, res, next) {
 
 });
 
+// Use Jade
+indigo.set('view engine', 'jade');
+indigo.set('views', configuration.webServer.jadeViewsPath);
+
 // Return data
 if(configuration.httpServer.enabled && configuration.httpsServer.enabled)  {
 

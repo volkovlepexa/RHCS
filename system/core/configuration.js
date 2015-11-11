@@ -88,7 +88,10 @@ configuration = {
   webServer: {
 
     // Path to "assets" folder
-    assetsPath: configuration.applicationFolder + "/system/template/assets"
+    assetsPath: configuration.applicationFolder + "/system/template/assets",
+
+    // Path to jade templates
+    jadeViewsPath: configuration.applicationFolder + "/system/template/views"
 
   },
 

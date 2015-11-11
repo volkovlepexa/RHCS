@@ -1,0 +1,47 @@
+doctype html
+html
+  head
+    //- Include all headers
+    include ./includes/head.jade
+    
+  body
+
+    div.container
+    
+      div.row
+        
+        div.eleven.column
+          br
+          h3.heading Authentication required
+          
+          form(action="#")
+          
+            div.row
+              //- Username
+              div.eight.columns
+                label(for="username") Username
+                input(type="text", class="u-full-width", id="username", placeholder="Username", required)
+                
+            //- Delimeter
+            div.row
+              div.eleven.column
+                &nbsp;
+              
+            div.row
+              //- Password
+              div.eight.columns
+                label(for="password") Password
+                input(type="password", class="u-full-width", id="password", placeholder="Password", required)
+    
+            //- Delimeter
+            div.row
+              div.eleven.column
+                &nbsp;
+    
+            div.row
+              div.eight.columns
+                button.button(class="button-primary u-full-width", id="authSubmit") Login
+          
+    
+    //- Include JS
+    include ./includes/scripts.jade
