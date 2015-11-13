@@ -16,6 +16,6 @@ var mqttClient = require('./system/core/factories/mqttFactory.js');
 
 indigo.get('/', function (req, res) {
 
-  res.render('index', { title: 'Hey', message: 'Hello there!'});
+  res.render('index', { pageMarker: 'auth', title: 'Hey', message: 'Hello there!'});
 
 });

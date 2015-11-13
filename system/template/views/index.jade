@@ -4,6 +4,9 @@ html
     //- Include all headers
     include ./includes/head.jade
     
+    //- Use marker
+    script window.rhcs = { pageMarker: "#{pageMarker}" };
+    
   body
 
     div.container
@@ -18,30 +21,34 @@ html
           
             div.row
               //- Username
-              div.eight.columns
+              div.eleven.columns
                 label(for="username") Username
-                input(type="text", class="u-full-width", id="username", placeholder="Username", required)
+                input(type="text", class="u-full-width", id="usernameField", placeholder="Username", required)
                 
             //- Delimeter
             div.row
               div.eleven.column
-                &nbsp;
+               br
               
             div.row
               //- Password
-              div.eight.columns
+              div.eleven.columns
                 label(for="password") Password
-                input(type="password", class="u-full-width", id="password", placeholder="Password", required)
+                input(type="password", class="u-full-width", id="passwordField", placeholder="Password", required)
     
             //- Delimeter
             div.row
               div.eleven.column
-                &nbsp;
+               br
+                
     
             div.row
-              div.eight.columns
+              div.eleven.columns
                 button.button(class="button-primary u-full-width", id="authSubmit") Login
-          
+    
+            div.row
+              div.eleven.columns
+                small.ta-center Development version. Haystacks of errors are included
     
     //- Include JS
     include ./includes/scripts.jade
