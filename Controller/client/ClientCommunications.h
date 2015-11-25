@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "PubSubClient.h"
-#include <String>
+#include <string>
 
 using namespace std;
 
@@ -33,7 +33,7 @@ class ClientCommunications {
 	* @param value Sensor measurment 
 	* @param priority Proce
     */
-    void sendMeasurment(int sensorId, string value, int priority); 
+    void sendMeasurment(int sensorId, String value, int priority); 
 
     /**
 	* @return true connection status is OK; false connection lost 

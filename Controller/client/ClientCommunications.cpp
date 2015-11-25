@@ -18,8 +18,20 @@ void ClientCommunications::sendError(int errorId) {
 * @param value Sensor measurment 
 * @param priority Proce
 */
-void ClientCommunications::sendMeasurment(int sensorId, string value, int priority) {
-
+void ClientCommunications::sendMeasurment(int sensorId, String value, int priority) {
+  if (!client.connected()){
+    client.connect("someID");
+  }
+  
+  String msg = "{sensor:\"" + String(sensorId) + "\",";
+  msg += "value:\"" + value + "\",";
+  msg += "priority:" + String(priority) + "}";
+  
+  char temp[128];
+ 
+  msg.toCharArray( temp, msg.length() + 1 );
+ 
+  client.publish("MyTopic", temp);
 } // Dmitrii
 
 /**
