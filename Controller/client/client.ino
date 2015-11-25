@@ -1,20 +1,32 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "PubSubClient.h"
+#include <string>
 
-// Update these with values suitable for your network.
+const char[] IDENTIFER="ID0"; 	// used for identify type of device
+const char[] room="ID0"; 		// room identifer used like topic 
+
+
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(172, 16, 0, 100);
-IPAddress server(172, 16, 0, 2);
+IPAddress ip(192, 168, 1, 153);
+IPAddress server(192, 168, 1, 101);//server ip
+
+/* payload format
+adress reciver \n
+action \n
+value \n
+*/
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
+  int i = 0;
+  char[10] id;
+  while(payload[i] != '\n'){
+      id[i] = payload[i];
+      i++;
   }
-  Serial.println();
+  i++;
+  if(String.)
+  
 }
 
 EthernetClient ethClient;
@@ -28,7 +40,7 @@ void reconnect() {
     if (client.connect("arduinoClient")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic","hello world");
+      client.publish(room, IDENTIFER);
       // ... and resubscribe
       client.subscribe("inTopic");
     } else {
@@ -59,4 +71,8 @@ void loop()
     reconnect();
   }
   client.loop();
+  std::string message = "server\n";
+  message+="read";
+  message+= 
+  client.publish(room, );
 }
