@@ -8,7 +8,16 @@ ClientCommunications::ClientCommunications(byte* mac, byte* ip, byte* server, st
 * Send error code to server 
 * @param errorId Error code
 */
-void ClientCommunications::sendError(int errorId) {
+void ClientCommunications::sendError(String inTopic, String errorId) {
+  if ( !(client.connected()) ) {
+    client.connect(clientId);
+  }
+  else {
+    char buffer[256];
+    String errorMessage = "{errorCode: \""+ errorId + "\"}";
+    errorMessage.toCharArray(buffer, strlen(errorMessage) + 1);
+    client.publish(inTopic, buffer);
+  }
 
 } // Alexey
 
@@ -33,13 +42,6 @@ void ClientCommunications::sendMeasurment(int sensorId, String value, int priori
  
   client.publish("MyTopic", temp);
 } // Dmitrii
-
-/**
-* @return true connection status is OK; false connection lost 
-*/
-bool ClientCommunications::isConnected() {
-
-} // 
 
 /**
 * Connect/Reconnect to server

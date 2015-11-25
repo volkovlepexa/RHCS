@@ -25,7 +25,7 @@ class ClientCommunications {
     * Send error code to server 
 	* @param errorId Error code
     */
-    void sendError(int errorId); 
+    void sendError(String inTopic, String errorId); 
 
     /**
     * Send measurment from sensor to server
@@ -34,11 +34,6 @@ class ClientCommunications {
 	* @param priority Proce
     */
     void sendMeasurment(int sensorId, String value, int priority); 
-
-    /**
-	* @return true connection status is OK; false connection lost 
-    */
-    bool isConnected(); 
 
     /**
     * Connect/Reconnect to server
